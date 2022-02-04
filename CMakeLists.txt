@@ -29,7 +29,7 @@ if (EXTERNAL_CXXOPTS)
     target_link_libraries(crosswrench PRIVATE cxxopts::cxxopts)
 else()
     target_include_directories(crosswrench PRIVATE
-                               ${CMAKE_SOURCE_DIR}/src/cxxopts)
+                               ${CMAKE_SOURCE_DIR}/libs/cxxopts)
 endif()
 
 include(GNUInstallDirs)
