@@ -9,8 +9,6 @@ project(crosswrench
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(CrossWrench)
 
-option(EXTERNAL_CXXOPTS "Use cxxopts external to the project" OFF) 
-
 add_executable(crosswrench
                src/main.cpp
                src/license.cpp)
@@ -24,14 +22,10 @@ cw_string_literal(cwLicenseLibs ${CMAKE_SOURCE_DIR}/LICENSE.libs ${CMAKE_BINARY_
 cw_add_compile_flag(crosswrench -Wall)
 cw_add_compile_flag(crosswrench -Wextra)
 
-if (EXTERNAL_CXXOPTS)
-    find_package(cxxopts REQUIRED)
-    target_link_libraries(crosswrench PRIVATE cxxopts::cxxopts)
-else()
-    target_include_directories(crosswrench PRIVATE
-                               ${CMAKE_SOURCE_DIR}/libs/cxxopts)
-endif()
+# libs
+include(libs/cxxopts.cmake)
 
+# install
 include(GNUInstallDirs)
 
 install(TARGETS crosswrench)
