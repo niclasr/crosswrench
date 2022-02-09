@@ -37,7 +37,7 @@ BraceWrapping:
   AfterExternBlock: true
   BeforeCatch:     true
   BeforeElse:      true
-#  BeforeWhile:     true
+  BeforeWhile:     true
   IndentBraces:    false
   SplitEmptyFunction: false
   SplitEmptyRecord: false
@@ -118,7 +118,7 @@ SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: false
 SpaceBeforeAssignmentOperators: true
-#SpaceBeforeCaseColon: true
+SpaceBeforeCaseColon: true
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
