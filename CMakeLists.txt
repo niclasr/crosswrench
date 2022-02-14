@@ -10,8 +10,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(CrossWrench)
 
 add_executable(crosswrench
+               src/config.cpp
+               src/execute.cpp
                src/main.cpp
-               src/license.cpp)
+               src/license.cpp
+               src/wheel.cpp)
 
 target_include_directories(crosswrench PRIVATE ${CMAKE_BINARY_DIR})
 
@@ -24,6 +27,9 @@ cw_add_compile_flag(crosswrench -Wextra)
 
 # libs
 include(libs/cxxopts.cmake)
+include(libs/libzippp.cmake)
+include(libs/pystring.cmake)
+include(libs/pstreams.cmake)
 
 # install
 include(GNUInstallDirs)

@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "config.hpp"
+#include "execute.hpp"
 #include "license.hpp"
 
 #include <cxxopts.hpp>
@@ -75,7 +77,11 @@ main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    return EXIT_SUCCESS;
+    if (!crosswrench::config::instance()->setup(result)) {
+        return EXIT_FAILURE;
+    }
+
+    return crosswrench::execute();
 }
 
 bool
@@ -102,7 +108,7 @@ check_options(cxxopts::ParseResult &pr)
         }
     }
 
-    std::vector<std::string> run_opts{ "destdir", "prefix", "wheel" };
+    std::vector<std::string> run_opts{ "destdir", "prefix", "wheel", "python" };
     bool has_run_opts = false;
     for (auto opt : run_opts) {
         if (pr.count(opt)) {
