@@ -27,6 +27,7 @@ SOFTWARE.
 #include <unistd.h>
 
 #include <array>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
@@ -34,6 +35,12 @@ namespace crosswrench {
 
 namespace {
 config *config_instance = nullptr;
+
+void
+delete_config_instance()
+{
+    delete config_instance;
+}
 }
 
 const std::string pcode_start =
@@ -49,6 +56,7 @@ config::instance()
 {
     if (config_instance == nullptr) {
         config_instance = new config();
+        std::atexit(delete_config_instance);
     }
 
     return config_instance;
