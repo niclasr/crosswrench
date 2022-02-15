@@ -32,8 +32,9 @@ SOFTWARE.
 
 namespace crosswrench {
 
+namespace {
 // helper function
-static std::string
+std::string
 find_line_in_wheel(std::vector<std::string> &lines, std::string key)
 {
     auto find_line = [](std::string v) {
@@ -59,6 +60,7 @@ find_line_in_wheel(std::vector<std::string> &lines, std::string key)
 
     return pystring::strip(split_result.at(1));
 }
+} // namespace
 
 wheel::wheel() = default;
 
