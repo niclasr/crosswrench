@@ -46,69 +46,52 @@ find_line_in_wheel(std::vector<std::string> &lines, std::string key)
     auto line =
       std::find_if(lines.begin(), lines.end(), find_line(pystring::lower(key)));
     if (line == lines.end()) {
-        std::cout << "WHEEL metadata is malformed, " << key << " is missing"
-                  << std::endl;
-        return nullptr;
+        throw std::string("WHEEL metadata is malformed, " + key +
+                          " is missing");
     }
     std::vector<std::string> split_result;
     pystring::split(*line, split_result, ":");
     if (split_result.size() != 2) {
-        std::cout << "WHEEL metadata is malformed, " << key << " value line "
-                  << "contains an extra :" << std::endl;
-        return nullptr;
+        throw std::string("WHEEL metadata is malformed, " + key +
+                          " value line contains an extra :");
     }
 
     return pystring::strip(split_result.at(1));
 }
 } // namespace
 
-wheel::wheel() = default;
-
-wheel *
-wheel::parse(std::string wheel_meta)
+wheel::wheel(std::string wheel_meta)
 {
     auto wheel_meta_lower = pystring::lower(wheel_meta);
     std::vector<std::string> wheel_lines;
     pystring::splitlines(wheel_meta_lower, wheel_lines);
-    std::unique_ptr<wheel> nwheel{ new wheel{} };
     std::vector<std::string> split_result;
     std::string value;
     // Wheel-Version
     value = find_line_in_wheel(wheel_lines, "Wheel-Version");
-    if (value.empty()) {
-        return nullptr;
-    }
     pystring::split(value, split_result, ".");
     if (split_result.size() == 2) {
         if (!pystring::isdigit(split_result.at(0)) ||
             !pystring::isdigit(split_result.at(1)))
         {
-            std::cout << "WHEEL metadata is malformed, Wheel-Version"
-                      << "value line format invalid" << std::endl;
-            return nullptr;
+            throw std::string("WHEEL metadata is malformed, Wheel-Version "
+                              "value line format invalid");
         }
     }
     else {
-        std::cout << "WHEEL metadata is malformed, Wheel-Version value line "
-                  << "format invalid" << std::endl;
-        return nullptr;
+        throw std::string("WHEEL metadata is malformed, Wheel-Version value "
+                          "line format invalid");
     }
-    nwheel->WheelVersionMajor = std::stoul(split_result.at(0));
-    nwheel->WheelVersionMinor = std::stoul(split_result.at(1));
+    WheelVersionMajor = std::stoul(split_result.at(0));
+    WheelVersionMinor = std::stoul(split_result.at(1));
 
     // Root-Is-Purelib
     value = find_line_in_wheel(wheel_lines, "Root-Is-Purelib");
-    if (value.empty()) {
-        return nullptr;
-    }
     if (!(value == "true" || value == "false")) {
-        std::cout << "WHEEL metadata is malformed, Root-Is-Purelib value line "
-                  << "format invalid" << std::endl;
-        return nullptr;
+        throw std::string("WHEEL metadata is malformed, Root-Is-Purelib value "
+                          "line format invalid");
     }
-    nwheel->RootIsPurelib = (value == "true");
-
-    return nwheel.release();
+    RootIsPurelib = (value == "true");
 }
 
 bool
