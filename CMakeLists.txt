@@ -16,6 +16,10 @@ add_executable(crosswrench
                src/license.cpp
                src/wheel.cpp)
 
+set_target_properties(crosswrench PROPERTIES
+                      CXX_STANDARD 14
+                      CXX_STANDARD_REQUIRED ON
+                      CXX_EXTENSIONS OFF)
 target_include_directories(crosswrench PRIVATE ${CMAKE_BINARY_DIR})
 
 cw_string_literal(cwLicense ${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/license.inc)

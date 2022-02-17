@@ -34,42 +34,57 @@ namespace crosswrench {
 
 namespace {
 // helper function
-std::string
-find_line_in_wheel(std::vector<std::string> &lines, std::string key)
-{
-    auto find_line = [](std::string v) {
-        return [&](std::string l) {
-            return pystring::startswith(pystring::strip(l), v);
-        };
-    };
+uint8_t mandatory = 0b1;
+uint8_t only_once = 0b10;
 
-    auto line =
-      std::find_if(lines.begin(), lines.end(), find_line(pystring::lower(key)));
-    if (line == lines.end()) {
+void
+find_values_in_wheel(std::vector<std::string> &lines,
+                     std::vector<std::string> &result,
+                     std::string key,
+                     uint8_t flags)
+{
+    result.clear();
+    auto key_l = pystring::lower(key);
+
+    for (auto &line : lines) {
+        if (pystring::startswith(pystring::strip(line), key_l)) {
+            std::vector<std::string> split_result;
+            pystring::split(line, split_result, ":");
+            if (split_result.size() != 2) {
+                throw std::string("WHEEL metadata is malformed, " + key +
+                                  " value line contains an extra :");
+            }
+            result.push_back(pystring::strip(split_result.at(1)));
+        }
+    }
+
+    if ((flags & mandatory) && (result.size() == 0)) {
         throw std::string("WHEEL metadata is malformed, " + key +
                           " is missing");
     }
-    std::vector<std::string> split_result;
-    pystring::split(*line, split_result, ":");
-    if (split_result.size() != 2) {
-        throw std::string("WHEEL metadata is malformed, " + key +
-                          " value line contains an extra :");
-    }
 
-    return pystring::strip(split_result.at(1));
+    if ((flags & only_once) && (result.size() > 1)) {
+        throw std::string("WHEEL metadata is malformed, " + key +
+                          " is allowed only once");
+    }
 }
 } // namespace
 
 wheel::wheel(std::string wheel_meta)
 {
-    auto wheel_meta_lower = pystring::lower(wheel_meta);
     std::vector<std::string> wheel_lines;
-    pystring::splitlines(wheel_meta_lower, wheel_lines);
+    std::vector<std::string> values;
     std::vector<std::string> split_result;
-    std::string value;
+
+    auto wheel_meta_lower = pystring::lower(wheel_meta);
+    pystring::splitlines(wheel_meta_lower, wheel_lines);
+
     // Wheel-Version
-    value = find_line_in_wheel(wheel_lines, "Wheel-Version");
-    pystring::split(value, split_result, ".");
+    find_values_in_wheel(wheel_lines,
+                         values,
+                         "Wheel-Version",
+                         mandatory | only_once);
+    pystring::split(values.at(0), split_result, ".");
     if (split_result.size() == 2) {
         if (!pystring::isdigit(split_result.at(0)) ||
             !pystring::isdigit(split_result.at(1)))
@@ -86,7 +101,11 @@ wheel::wheel(std::string wheel_meta)
     WheelVersionMinor = std::stoul(split_result.at(1));
 
     // Root-Is-Purelib
-    value = find_line_in_wheel(wheel_lines, "Root-Is-Purelib");
+    find_values_in_wheel(wheel_lines,
+                         values,
+                         "Root-Is-Purelib",
+                         mandatory | only_once);
+    auto value = values.at(0);
     if (!(value == "true" || value == "false")) {
         throw std::string("WHEEL metadata is malformed, Root-Is-Purelib value "
                           "line format invalid");
