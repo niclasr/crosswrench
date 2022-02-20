@@ -43,6 +43,10 @@ main(int argc, char *argv[])
     options.add_options()
         ("destdir", "destination root",
           cxxopts::value<std::string>()->implicit_value(""))
+        ("installer", "installer name",
+          cxxopts::value<std::string>()->
+          implicit_value("")->
+          default_value("crosswrench"))
         ("prefix", "destination prefix",
           cxxopts::value<std::string>()->implicit_value(""))
         ("python", "path to python interpreter",
@@ -126,6 +130,23 @@ check_options(cxxopts::ParseResult &pr)
                 std::cerr << "--" << opt << " must be provided" << std::endl;
                 areAllOptionsValid = false;
             }
+        }
+        if (pr.count("installer")) {
+            if (pr["installer"].as<std::string>() == "") {
+                std::cerr << "--installer must be given a value or not used"
+                          << std::endl;
+                areAllOptionsValid = false;
+            }
+        }
+    }
+    else {
+        if (pr.count("installer")) {
+            std::cerr << "--installer can only be used with ";
+            for (auto opt : run_opts) {
+                std::cerr << "--" << opt << " ";
+            }
+            std::cerr << std::endl;
+            areAllOptionsValid = false;
         }
     }
     std::vector<std::string> lone_options{ "help", "license", "license-libs" };

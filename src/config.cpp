@@ -41,7 +41,7 @@ delete_config_instance()
 {
     delete config_instance;
 }
-}
+} // namespace
 
 const std::string pcode_start =
   " -c \"import sysconfig; print(sysconfig.get_path('";
@@ -65,14 +65,18 @@ config::instance()
 bool
 config::setup(cxxopts::ParseResult &pr)
 {
-    std::vector<std::string> run_opts{ "destdir", "prefix", "wheel", "python" };
+    std::vector<std::string> config_opts{ "destdir",
+                                          "installer",
+                                          "prefix",
+                                          "python",
+                                          "wheel" };
     new_db.clear();
 
     if (!verify_python_interpreter(pr)) {
         return false;
     }
 
-    for (auto opt : run_opts) {
+    for (auto opt : config_opts) {
         new_db[opt] = pr[opt].as<std::string>();
     }
 
