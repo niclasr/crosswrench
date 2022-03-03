@@ -20,41 +20,54 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "record.hpp"
-#include "wheel.hpp"
+#include "hashlib2botan.hpp"
 
-#include <cstdlib>
-#include <iostream>
+#include <botan/hash.h>
+#include <pystring.h>
+
+#include <map>
+#include <string>
 
 namespace crosswrench {
 
-int
-execute()
+hashlib2botan::hashlib2botan()
 {
-    // testing exceptions, just for testing will be removed
-    // std::string wheel_test{ "not-a-valid-WHEEL: some value" };
-    // std::string wheel_test{ "Wheel-Version: 1.0\n" };
-    // std::string wheel_test{ "Wheel-Version: 1.0\nRoot-Is-Purelib: nhfg" };
-    // std::string wheel_test{ "Wheel-Version: lhiui\nRoot-Is-Purelib: true" };
-    std::string wheel_test{ "Wheel-Version: 1.0\nRoot-Is-Purelib: true" };
-
-    // std::string record_test{
-    //     "afile,sha256=iujzVdlXafvRsdXC6HMC/09grXvDF0Vl6PhKoHq4kLo,6,hffh"
-    // };
-    std::string record_test{ "wheel-1.0.dist-info/RECORD,," };
-
-    try {
-        wheel wheel_obj{ wheel_test };
-        record record_obj{ record_test };
-    }
-    catch (std::string s) {
-        std::cerr << s << std::endl;
-        return EXIT_FAILURE;
-    }
-    // end of testing
-
-    // the main runner of the program (to be witten)
-    return EXIT_SUCCESS;
+#if defined(BOTAN_HAS_SHA2_32)
+    conv_table["sha256"] = "SHA-256";
+#endif
+#if defined(BOTAN_HAS_SHA2_64)
+    conv_table["sha384"] = "SHA-384";
+    conv_table["sha512"] = "SHA-512";
+    conv_table["sha512_256"] = "SHA-512-256";
+#endif
+#if defined(BOTAN_HAS_SHA3)
+    conv_table["sha3_224"] = "SHA3(224)";
+    conv_table["sha3_256"] = "SHA3(256)";
+    conv_table["sha3_384"] = "SHA3(384)";
+    conv_table["sha3_512"] = "SHA3(512)";
+#endif
+#if defined(BOTAN_HAS_SM3)
+    conv_table["sm3"] = "SM3";
+#endif
+#if defined(BOTAN_HAS_WHIRLPOOL)
+    conv_table["whirlpool"] = "Whirlpool";
+#endif
 }
 
+bool
+hashlib2botan::available(std::string hashlib_algo)
+{
+    return conv_table.count(hashlib_algo) == 1;
+}
+
+std::string
+hashlib2botan::hashname(std::string hashlib_algo)
+{
+    if (!available(hashlib_algo)) {
+        throw std::string(
+          "hashlib2botan::hashname() called with an unavalable algorithm");
+    }
+
+    return conv_table[hashlib_algo];
+}
 } // namespace crosswrench

@@ -20,41 +20,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "record.hpp"
-#include "wheel.hpp"
+#include "dirnames.hpp"
 
-#include <cstdlib>
-#include <iostream>
+#include "config.hpp"
+
+#include <pystring.h>
+
+#include <filesystem>
+#include <vector>
 
 namespace crosswrench {
 
-int
-execute()
+namespace {
+std::string
+distdashversion()
 {
-    // testing exceptions, just for testing will be removed
-    // std::string wheel_test{ "not-a-valid-WHEEL: some value" };
-    // std::string wheel_test{ "Wheel-Version: 1.0\n" };
-    // std::string wheel_test{ "Wheel-Version: 1.0\nRoot-Is-Purelib: nhfg" };
-    // std::string wheel_test{ "Wheel-Version: lhiui\nRoot-Is-Purelib: true" };
-    std::string wheel_test{ "Wheel-Version: 1.0\nRoot-Is-Purelib: true" };
+    std::vector<std::string> result;
+    std::string wheelarg = config::instance()->get_value("wheel");
+    std::filesystem::path wheelpath{ wheelarg };
+    std::string wheelname = wheelpath.filename().string();
+    pystring::split(wheelname, result, "-");
+    result.erase(result.begin() + 2, result.end());
 
-    // std::string record_test{
-    //     "afile,sha256=iujzVdlXafvRsdXC6HMC/09grXvDF0Vl6PhKoHq4kLo,6,hffh"
-    // };
-    std::string record_test{ "wheel-1.0.dist-info/RECORD,," };
-
-    try {
-        wheel wheel_obj{ wheel_test };
-        record record_obj{ record_test };
-    }
-    catch (std::string s) {
-        std::cerr << s << std::endl;
-        return EXIT_FAILURE;
-    }
-    // end of testing
-
-    // the main runner of the program (to be witten)
-    return EXIT_SUCCESS;
+    return pystring::join("-", result);
 }
 
+} // namespace
+
+std::string
+dotdistinfodir()
+{
+    return distdashversion() + ".dist-info";
+}
+
+std::string
+dotdatadir()
+{
+    return distdashversion() + ".data";
+}
 } // namespace crosswrench
