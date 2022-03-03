@@ -14,6 +14,7 @@ add_executable(crosswrench
                src/dirnames.cpp
                src/execute.cpp
                src/hashlib2botan.cpp
+               src/isbase64nopad.cpp
                src/main.cpp
                src/license.cpp
                src/record.cpp

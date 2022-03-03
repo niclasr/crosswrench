@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include "dirnames.hpp"
 #include "hashlib2botan.hpp"
+#include "isbase64nopad.hpp"
 
 #include <botan/hash.h>
 #if defined(EXTERNAL_CSV2)
@@ -83,6 +84,13 @@ record::record(std::string content)
                               hashtype + std::string(" that is not supported") +
                               std::string(" by crosswrench");
                         }
+                        std::string hashvalue = result[2];
+                        if (!isbase64nopad(hashvalue)) {
+                            throw std::string(
+                              "hash in RECORD is not a base64 encoded string");
+                        }
+                        from_csv[1] = hashtype;
+                        from_csv[2] = hashvalue;
                         break;
                     }
                     case 2: {
@@ -99,9 +107,17 @@ record::record(std::string content)
                         throw std::string(
                           "RECORD invalid, to many cells in row");
                 }
-
                 cell_index++;
             }
+
+            if (records.count(from_csv[0]) == 1) {
+                throw std::string(
+                  "RECORD contains the same file multiple times");
+            }
+            std::array<std::string, 3> values{ from_csv[1],
+                                               from_csv[2],
+                                               from_csv[3] };
+            records[from_csv[0]] = values;
         }
     }
     else {
