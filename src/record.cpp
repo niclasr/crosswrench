@@ -43,6 +43,11 @@ namespace crosswrench {
 
 record::record(std::string content)
 {
+    // normalize EOL:s
+    std::vector<std::string> content_result;
+    pystring::splitlines(content, content_result);
+    content = pystring::join("\n", content_result);
+
     csv2::Reader<csv2::delimiter<','>,
                  csv2::quote_character<'"'>,
                  csv2::first_row_is_header<false>,
