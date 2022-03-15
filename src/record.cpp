@@ -26,6 +26,7 @@ SOFTWARE.
 #include "hashlib2botan.hpp"
 #include "isbase64nopad.hpp"
 
+#include <botan/base64.h>
 #include <botan/hash.h>
 #if defined(EXTERNAL_CSV2)
 #include <csv2/reader.hpp>
@@ -40,6 +41,12 @@ SOFTWARE.
 #include <vector>
 
 namespace crosswrench {
+
+namespace {
+const int RHASHTYPE = 0;
+const int RHASHVALUE = 1;
+const int RFILESIZE = 2;
+} // namespace
 
 record::record(std::string content)
 {
@@ -128,5 +135,50 @@ record::record(std::string content)
     else {
         throw std::string("RECORD is empty");
     }
+}
+
+bool
+record::verify(libzippp::ZipArchive ar)
+{
+    std::vector<libzippp::ZipEntry> wentries = ar.getEntries();
+    hashlib2botan h2b;
+
+    for (auto i : records) {
+        if (!ar.hasEntry(i.first, true)) {
+            return false;
+        }
+    }
+
+    for (auto we : wentries) {
+        if (we.isDirectory() || we.getName() == (dotdistinfodir() + "/RECORD"))
+        {
+            continue;
+        }
+
+        if (records.count(we.getName()) == 0) {
+            return false;
+        }
+
+        auto re = records.at(we.getName());
+        auto hasher =
+          Botan::HashFunction::create(h2b.hashname(re.at(RHASHTYPE)));
+
+        auto hashupdate = [&](const void *data, libzippp_uint64 data_size) {
+            hasher->update((const uint8_t *)data, data_size);
+            return true;
+        };
+
+        if (ar.readEntry(we, hashupdate) != std::stoll(re.at(RFILESIZE))) {
+            return false;
+        }
+
+        if (pystring::rstrip(Botan::base64_encode(hasher->final()), "=") !=
+            re.at(RHASHVALUE))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 } // namespace crosswrench
