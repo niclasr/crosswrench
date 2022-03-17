@@ -1,5 +1,5 @@
-#if !defined(_SRC_DIRNAMES_HPP_)
-#define _SRC_DIRNAMES_HPP_
+#if !defined(_SRC_FUNCTIONS_HPP_)
+#define _SRC_FUNCTIONS_HPP_
 
 #include <string>
 
