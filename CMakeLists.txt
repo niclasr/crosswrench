@@ -17,7 +17,7 @@ add_library(cw_all_targets INTERFACE)
 
 add_library(cw_shared_src OBJECT
             src/config.cpp
-            src/dirnames.cpp
+            src/functions.cpp
             src/hashlib2botan.cpp
             src/isbase64nopad.cpp
             src/record.cpp

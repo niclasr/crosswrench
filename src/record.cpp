@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "record.hpp"
 
-#include "dirnames.hpp"
+#include "functions.hpp"
 #include "hashlib2botan.hpp"
 #include "isbase64nopad.hpp"
 
