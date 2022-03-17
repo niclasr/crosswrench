@@ -6,6 +6,7 @@
 namespace crosswrench {
 std::string dotdistinfodir();
 std::string dotdatadir();
+bool isbase64nopad(const std::string&);
 } // namespace crosswrench
 
 #endif

@@ -24,7 +24,6 @@ SOFTWARE.
 
 #include "functions.hpp"
 #include "hashlib2botan.hpp"
-#include "isbase64nopad.hpp"
 
 #include <botan/base64.h>
 #include <botan/hash.h>

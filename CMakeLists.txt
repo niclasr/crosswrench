@@ -19,7 +19,6 @@ add_library(cw_shared_src OBJECT
             src/config.cpp
             src/functions.cpp
             src/hashlib2botan.cpp
-            src/isbase64nopad.cpp
             src/record.cpp
             src/wheel.cpp)
 target_link_libraries(cw_shared_src cw_all_targets)

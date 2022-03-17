@@ -26,7 +26,10 @@ SOFTWARE.
 
 #include <pystring.h>
 
+#include <algorithm>
+#include <cctype>
 #include <filesystem>
+#include <string>
 #include <vector>
 
 namespace crosswrench {
@@ -57,5 +60,15 @@ std::string
 dotdatadir()
 {
     return distdashversion() + ".data";
+}
+
+bool
+isbase64nopad(const std::string &str)
+{
+    auto pred = [](unsigned char c) {
+        return (std::isalpha(c) || std::isdigit(c) || c == '+' || c == '/');
+    };
+
+    return std::all_of(str.cbegin(), str.cend(), pred);
 }
 } // namespace crosswrench

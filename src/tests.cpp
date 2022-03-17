@@ -1,6 +1,6 @@
 
+#include "functions.hpp"
 #include "hashlib2botan.hpp"
-#include "isbase64nopad.hpp"
 #include "record.hpp"
 #include "wheel.hpp"
 
