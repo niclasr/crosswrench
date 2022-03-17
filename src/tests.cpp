@@ -20,6 +20,8 @@ TEST_CASE("hashlib2botan", "[hashlib2botan]")
 TEST_CASE("isbase64nopad", "[isbase64nopad]")
 {
     REQUIRE_FALSE(crosswrench::isbase64nopad("="));
+    REQUIRE(crosswrench::isbase64nopad(
+      "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU"));
 }
 
 TEST_CASE("wheel class", "[wheel]")
