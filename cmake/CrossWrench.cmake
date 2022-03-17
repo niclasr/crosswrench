@@ -1,11 +1,11 @@
 
 include(CheckCXXCompilerFlag)
 
-function(cw_add_compile_flag TARGET FLAG)
+function(cw_add_compile_flag TARGET VISIBILITY FLAG)
     set(CMAKE_REQUIRED_QUIET ON)
     check_cxx_compiler_flag(${FLAG} CW_COMPILE_FLAG${FLAG})
     if (CW_COMPILE_FLAG${FLAG})
-        target_compile_options(${TARGET} PRIVATE ${FLAG})
+        target_compile_options(${TARGET} ${VISIBILITY} ${FLAG})
     endif()
 endfunction()
 
@@ -28,19 +28,20 @@ function(cw_library NAME)
 
     if (EXTERNAL_${UPPERNAME})
         find_package(${NAME} REQUIRED)
-        target_compile_definitions(crosswrench PRIVATE EXTERNAL_${UPPERNAME})
-        target_link_libraries(crosswrench PRIVATE ${NAME}::${NAME})
+        target_compile_definitions(cw_all_targets INTERFACE EXTERNAL_${UPPERNAME})
+        target_link_libraries(cw_all_targets INTERFACE ${NAME}::${NAME})
     else()
         foreach(E_PKG IN LISTS CW_LIBRARY_EPKGS)
             find_package(${E_PKG} REQUIRED)
         endforeach()
         foreach(E_TARGET IN LISTS CW_LIBRARY_ETARGETS)
-            target_link_libraries(crosswrench PRIVATE ${E_TARGET})
+            target_link_libraries(cw_all_targets INTERFACE ${E_TARGET})
         endforeach()
-        target_include_directories(crosswrench PRIVATE
+        target_include_directories(cw_all_targets INTERFACE
                                    ${CMAKE_SOURCE_DIR}/libs/${NAME})
         foreach(SRC_FILE IN LISTS CW_LIBRARY_SRCS)
-            target_sources(crosswrench PRIVATE libs/${NAME}/${SRC_FILE})
+            target_sources(cw_shared_src PRIVATE
+                           ${CMAKE_SOURCE_DIR}/libs/${NAME}/${SRC_FILE})
         endforeach()
     endif()
 endfunction()

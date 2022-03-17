@@ -9,39 +9,58 @@ project(crosswrench
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(CrossWrench)
 
-add_executable(crosswrench
-               src/config.cpp
-               src/dirnames.cpp
-               src/execute.cpp
-               src/hashlib2botan.cpp
-               src/isbase64nopad.cpp
-               src/main.cpp
-               src/license.cpp
-               src/record.cpp
-               src/wheel.cpp)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-set_target_properties(crosswrench PROPERTIES
-                      CXX_STANDARD 17
-                      CXX_STANDARD_REQUIRED ON
-                      CXX_EXTENSIONS OFF)
+add_library(cw_all_targets INTERFACE)
+
+add_library(cw_shared_src OBJECT
+            src/config.cpp
+            src/dirnames.cpp
+            src/hashlib2botan.cpp
+            src/isbase64nopad.cpp
+            src/record.cpp
+            src/wheel.cpp)
+target_link_libraries(cw_shared_src cw_all_targets)
+
+add_executable(crosswrench
+               src/execute.cpp
+               src/main.cpp
+               src/license.cpp)
+
 target_include_directories(crosswrench PRIVATE ${CMAKE_BINARY_DIR})
+target_link_libraries(crosswrench cw_all_targets cw_shared_src)
 
 cw_string_literal(cwLicense ${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/license.inc)
 cw_string_literal(cwLicenseLibs ${CMAKE_SOURCE_DIR}/LICENSE.libs ${CMAKE_BINARY_DIR}/license-libs.inc)
 
 # add warnings
-cw_add_compile_flag(crosswrench -Wall)
-cw_add_compile_flag(crosswrench -Wextra)
+cw_add_compile_flag(cw_all_targets INTERFACE -Wall)
+cw_add_compile_flag(cw_all_targets INTERFACE -Wextra)
 
 # libs
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(botan-2 REQUIRED IMPORTED_TARGET botan-2)
-target_link_libraries(crosswrench PRIVATE PkgConfig::botan-2)
+target_link_libraries(cw_all_targets INTERFACE PkgConfig::botan-2)
 cw_library(csv2)
 cw_library(cxxopts)
 cw_library(libzippp SRCS libzippp.cpp EPKGS libzip ETARGETS libzip::zip)
 cw_library(pystring SRCS pystring.cpp)
 cw_library(pstreams)
+
+#tests
+option(ENABLE_TESTS "Build catch2 test cases" OFF)
+if(ENABLE_TESTS)
+    find_package(Catch2 REQUIRED)
+    add_executable(cwtests src/tests.cpp)
+    target_link_libraries(cwtests cw_all_targets)
+    target_link_libraries(cwtests cw_shared_src)
+    target_link_libraries(cwtests Catch2::Catch2)
+    include(CTest)
+    include(Catch)
+    catch_discover_tests(cwtests)
+endif()
 
 # install
 include(GNUInstallDirs)
