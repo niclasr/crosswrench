@@ -1,4 +1,5 @@
 
+#include "config.hpp"
 #include "functions.hpp"
 #include "hashlib2botan.hpp"
 #include "record.hpp"
@@ -51,5 +52,22 @@ TEST_CASE("wheel class", "[wheel]")
     REQUIRE_NOTHROW([&]() {
         std::string wheel_test6{ "Wheel-Version: 1.0\nRoot-Is-Purelib: false" };
         crosswrench::wheel wheel6{ wheel_test6 };
+    }());
+}
+
+TEST_CASE("record class", "[record]")
+{
+    std::map<std::string, std::string> sm;
+    sm["wheel"] = "wheel-0.37.1-py2.py3-none-any.whl";
+    crosswrench::config::instance()->setup(sm);
+    REQUIRE_NOTHROW([&]() {
+        std::string record_test1{
+            "afile,sha256=iujzVdlXafvRsdXC6HMC/09grXvDF0Vl6PhKoHq4kLo,6"
+        };
+        crosswrench::record record1{ record_test1 };
+    }());
+    CHECK_NOTHROW([&]() {
+        std::string record_test2{ "wheel-0.37.1.dist-info/RECORD,," };
+        crosswrench::record record2{ record_test2 };
     }());
 }

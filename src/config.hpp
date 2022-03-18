@@ -13,6 +13,7 @@ class config
   public:
     static config *instance();
     bool setup(cxxopts::ParseResult &);
+    bool setup(std::map<std::string, std::string> &);
     std::string get_value(std::string);
     void print_all();
     config(const config &) = delete;

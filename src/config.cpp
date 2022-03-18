@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include <pstream.h>
 #include <pystring.h>
+
 #include <unistd.h>
 
 #include <array>
@@ -86,6 +87,15 @@ config::setup(cxxopts::ParseResult &pr)
         }
     }
 
+    std::swap(db, new_db);
+    return true;
+}
+
+bool
+config::setup(std::map<std::string, std::string> &input)
+{
+    new_db.clear();
+    new_db = input;
     std::swap(db, new_db);
     return true;
 }
