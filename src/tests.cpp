@@ -46,6 +46,26 @@ TEST_CASE("isbase64nopad", "[isbase64nopad]")
       "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU"));
 }
 
+TEST_CASE("isversionnumber", "[isversionnumber]")
+{
+    REQUIRE_FALSE(crosswrench::isversionnumber("3de.76"));
+    REQUIRE(crosswrench::isversionnumber("1.2.3"));
+}
+
+TEST_CASE("iswheelfilenamevalid", "[iswheelfilenamvalid]")
+{
+    REQUIRE(crosswrench::iswheelfilenamevalid(
+      "distribution-1.0-1-py27-none-any.whl"));
+    REQUIRE(
+      crosswrench::iswheelfilenamevalid("distribution-1.0-py27-none-any.whl"));
+    REQUIRE_FALSE(
+      crosswrench::iswheelfilenamevalid("distribution-sfe-py27-none-any.whl"));
+    REQUIRE_FALSE(crosswrench::iswheelfilenamevalid("wheel.zip"));
+    REQUIRE_FALSE(crosswrench::iswheelfilenamevalid("wheel.txt"));
+    REQUIRE_FALSE(crosswrench::iswheelfilenamevalid("file.whl1"));
+    REQUIRE_FALSE(crosswrench::iswheelfilenamevalid("file.wheel"));
+}
+
 TEST_CASE("wheel class", "[wheel]")
 {
     REQUIRE_THROWS([&]() {
