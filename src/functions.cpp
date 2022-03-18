@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include "config.hpp"
 
+#include <libzippp.h>
 #include <pystring.h>
 
 #include <algorithm>
@@ -103,5 +104,15 @@ iswheelfilenamevalid(const std::string &filepath)
     }
 
     return true;
+}
+
+bool
+miniumdistinfofiles(libzippp::ZipArchive ar)
+{
+    std::array<std::string, 3> reqfiles{ "/METADATA", "/RECORD", "/WHEEL" };
+    auto pred = [&](std::string &filename) {
+        return ar.hasEntry(dotdistinfodir() + filename, true);
+    };
+    return std::all_of(reqfiles.begin(), reqfiles.end(), pred);
 }
 } // namespace crosswrench
