@@ -13,7 +13,7 @@ class record
   public:
     record() = delete;
     record(std::string);
-    bool verify(libzippp::ZipArchive);
+    bool verify(libzippp::ZipArchive&);
 
   private:
     std::map<std::string, std::array<std::string, 3>> records;

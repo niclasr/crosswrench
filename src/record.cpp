@@ -137,7 +137,7 @@ record::record(std::string content)
 }
 
 bool
-record::verify(libzippp::ZipArchive ar)
+record::verify(libzippp::ZipArchive &ar)
 {
     std::vector<libzippp::ZipEntry> wentries = ar.getEntries();
     hashlib2botan h2b;

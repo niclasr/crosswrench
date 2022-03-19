@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "config.hpp"
+#include "functions.hpp"
 #include "record.hpp"
 #include "wheel.hpp"
 
@@ -31,29 +33,47 @@ namespace crosswrench {
 int
 execute()
 {
-    // testing exceptions, just for testing will be removed
-    // std::string wheel_test{ "not-a-valid-WHEEL: some value" };
-    // std::string wheel_test{ "Wheel-Version: 1.0\n" };
-    // std::string wheel_test{ "Wheel-Version: 1.0\nRoot-Is-Purelib: nhfg" };
-    // std::string wheel_test{ "Wheel-Version: lhiui\nRoot-Is-Purelib: true" };
-    std::string wheel_test{ "Wheel-Version: 1.0\nRoot-Is-Purelib: true" };
+    // the main runner of the program (to be finished)
 
-    std::string record_test{
-        "afile,sha256=iujzVdlXafvRsdXC6HMC/09grXvDF0Vl6PhKoHq4kLo,6"
-    };
-    //std::string record_test{ "wheel-1.0.dist-info/RECORD,," };
+    if (!iswheelfilenamevalid(config::instance()->get_value("wheel"))) {
+        std::cerr << config::instance()->get_value("wheel")
+                  << " is not a wheelfile based on its filename" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    libzippp::ZipArchive wheelfile{ config::instance()->get_value("wheel") };
+
+    if (!wheelfile.open(libzippp::ZipArchive::ReadOnly, true)) {
+        std::cerr << config::instance()->get_value("wheel")
+                  << " could not be opened or is an invalid wheelfile"
+                  << std::endl;
+        return EXIT_FAILURE;
+    }
 
     try {
-        wheel wheel_obj{ wheel_test };
-        record record_obj{ record_test };
+        wheel wheel_obj{
+            wheelfile.getEntry(dotdistinfodir() + "/WHEEL").readAsText()
+        };
+        record record_obj{
+            wheelfile.getEntry(dotdistinfodir() + "/RECORD").readAsText()
+        };
+
+        if (!record_obj.verify(wheelfile)) {
+            std::cerr << config::instance()->get_value("wheel")
+                      << " is an invalid wheel file since the files failed "
+                      << "verification against RECORD" << std::endl;
+            return EXIT_FAILURE;
+        }
+
+        std::cout << config::instance()->get_value("wheel")
+                  << " is a valid wheel file as verified against RECORD"
+                  << std::endl;
     }
     catch (std::string s) {
         std::cerr << s << std::endl;
         return EXIT_FAILURE;
     }
-    // end of testing
 
-    // the main runner of the program (to be witten)
     return EXIT_SUCCESS;
 }
 

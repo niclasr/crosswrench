@@ -11,7 +11,7 @@ std::string dotdatadir();
 bool isbase64nopad(const std::string&);
 bool isversionnumber(const std::string&);
 bool iswheelfilenamevalid(const std::string&);
-bool miniumdistinfofiles(libzippp::ZipArchive);
+bool miniumdistinfofiles(libzippp::ZipArchive&);
 } // namespace crosswrench
 
 #endif
