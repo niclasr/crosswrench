@@ -39,11 +39,13 @@ TEST_CASE("hashlib2botan", "[hashlib2botan]")
     CHECK_NOTHROW(h2b.hashname("sha256"));
 }
 
-TEST_CASE("isbase64nopad", "[isbase64nopad]")
+TEST_CASE("isbase64urlsafenopad", "[isbase64urlsafenopad]")
 {
-    REQUIRE_FALSE(crosswrench::isbase64nopad("="));
-    REQUIRE(crosswrench::isbase64nopad(
+    REQUIRE_FALSE(crosswrench::isbase64urlsafenopad("="));
+    REQUIRE_FALSE(crosswrench::isbase64urlsafenopad(
       "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU"));
+    REQUIRE(crosswrench::isbase64urlsafenopad(
+      "47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU"));
 }
 
 TEST_CASE("isversionnumber", "[isversionnumber]")
@@ -101,9 +103,16 @@ TEST_CASE("record class", "[record]")
     std::map<std::string, std::string> sm;
     sm["wheel"] = "wheel-0.37.1-py2.py3-none-any.whl";
     crosswrench::config::instance()->setup(sm);
-    REQUIRE_NOTHROW([&]() {
+    REQUIRE_THROWS_AS([&]() {
         std::string record_test1{
             "afile,sha256=iujzVdlXafvRsdXC6HMC/09grXvDF0Vl6PhKoHq4kLo,6"
+        };
+        crosswrench::record record1{ record_test1 };
+    }(),
+    std::string);
+    REQUIRE_NOTHROW([&]() {
+        std::string record_test1{
+            "afile,sha256=iujzVdlXafvRsdXC6HMC_09grXvDF0Vl6PhKoHq4kLo,6"
         };
         crosswrench::record record1{ record_test1 };
     }());

@@ -96,7 +96,7 @@ record::record(std::string content)
                               std::string(" by crosswrench");
                         }
                         std::string hashvalue = result[2];
-                        if (!isbase64nopad(hashvalue)) {
+                        if (!isbase64urlsafenopad(hashvalue)) {
                             throw std::string(
                               "hash in RECORD is not a base64 encoded string");
                         }
@@ -171,9 +171,8 @@ record::verify(libzippp::ZipArchive &ar)
             return false;
         }
 
-        if (pystring::rstrip(Botan::base64_encode(hasher->final()), "=") !=
-            re.at(RHASHVALUE))
-        {
+        if (base64urlsafenopad(Botan::base64_encode(hasher->final())) !=
+            re.at(RHASHVALUE)) {
             return false;
         }
     }

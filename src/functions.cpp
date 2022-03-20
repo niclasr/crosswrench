@@ -64,10 +64,10 @@ dotdatadir()
 }
 
 bool
-isbase64nopad(const std::string &str)
+isbase64urlsafenopad(const std::string &str)
 {
     auto pred = [](unsigned char c) {
-        return (std::isalpha(c) || std::isdigit(c) || c == '+' || c == '/');
+        return (std::isalpha(c) || std::isdigit(c) || c == '-' || c == '_');
     };
 
     return std::all_of(str.cbegin(), str.cend(), pred);
@@ -115,4 +115,14 @@ miniumdistinfofiles(libzippp::ZipArchive &ar)
     };
     return std::all_of(reqfiles.begin(), reqfiles.end(), pred);
 }
+
+std::string
+base64urlsafenopad(std::string b64str)
+{
+    auto usnpb64 = pystring::rstrip(b64str, "=");
+    std::replace(usnpb64.begin(), usnpb64.end(), '+', '-');
+    std::replace(usnpb64.begin(), usnpb64.end(), '/', '_');
+    return usnpb64;
+}
+
 } // namespace crosswrench
