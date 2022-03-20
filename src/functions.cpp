@@ -111,7 +111,7 @@ miniumdistinfofiles(libzippp::ZipArchive &ar)
 {
     std::array<std::string, 3> reqfiles{ "/METADATA", "/RECORD", "/WHEEL" };
     auto pred = [&](std::string &filename) {
-        return ar.hasEntry(dotdistinfodir() + filename, true);
+        return ar.hasEntry(dotdistinfodir() + filename);
     };
     return std::all_of(reqfiles.begin(), reqfiles.end(), pred);
 }

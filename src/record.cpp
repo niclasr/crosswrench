@@ -143,7 +143,9 @@ record::verify(libzippp::ZipArchive &ar)
     hashlib2botan h2b;
 
     for (auto i : records) {
-        if (!ar.hasEntry(i.first, true)) {
+        if (!ar.hasEntry(i.first)) {
+            std::cerr << i.first << " is in RECORD but not in wheelfile"
+                      << std::endl;
             return false;
         }
     }
@@ -155,6 +157,8 @@ record::verify(libzippp::ZipArchive &ar)
         }
 
         if (records.count(we.getName()) == 0) {
+            std::cerr << we.getName() << " is in wheelfile but not in RECORD"
+                      << std::endl;
             return false;
         }
 
@@ -167,12 +171,29 @@ record::verify(libzippp::ZipArchive &ar)
             return true;
         };
 
-        if (ar.readEntry(we, hashupdate) != std::stoll(re.at(RFILESIZE))) {
+        // libzippp can't handle file with 0 size, ignoring them works
+        // since nothing needs to be written to get the correct hash.
+        if (we.getSize() != 0) {
+            int libzippp_ret;
+            if ((libzippp_ret = ar.readEntry(we, hashupdate)) != LIBZIPPP_OK) {
+                std::cerr
+                  << "readEntry did not return LIBZIPP_OK, it returned: "
+                  << libzippp_ret << " on entry " << we.getName() << std::endl;
+                return false;
+            }
+        }
+
+        if (we.getSize() != std::stoul(re.at(RFILESIZE))) {
+            std::cerr << "File size of " << we.getName()
+                      << " and the one in RECORD don't match" << std::endl;
             return false;
         }
 
         if (base64urlsafenopad(Botan::base64_encode(hasher->final())) !=
-            re.at(RHASHVALUE)) {
+            re.at(RHASHVALUE))
+        {
+            std::cerr << "Hash of " << we.getName() << " RECORD don't match"
+                      << std::endl;
             return false;
         }
     }
