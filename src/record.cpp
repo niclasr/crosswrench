@@ -151,10 +151,7 @@ record::verify(libzippp::ZipArchive &ar)
     }
 
     for (auto we : wentries) {
-        if (we.isDirectory() ||
-            we.getName() == (dotdistinfodir() + "/RECORD") ||
-            we.getName() == (dotdistinfodir() + "/RECORD.p7s") ||
-            we.getName() == (dotdistinfodir() + "/RECORD.jws"))
+        if (we.isDirectory() || isrecordfilenames(we.getName()))
         {
             continue;
         }
