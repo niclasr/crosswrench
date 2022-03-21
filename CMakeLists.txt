@@ -20,6 +20,7 @@ add_library(cw_shared_src OBJECT
             src/functions.cpp
             src/hashlib2botan.cpp
             src/record.cpp
+            src/spread.cpp
             src/wheel.cpp)
 target_link_libraries(cw_shared_src cw_all_targets)
 

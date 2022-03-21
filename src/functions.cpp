@@ -125,4 +125,12 @@ base64urlsafenopad(std::string b64str)
     return usnpb64;
 }
 
+bool
+isrecordfilenames(std::string name)
+{
+    return (name == dotdistinfodir() + "/RECORD") ||
+           (name == dotdistinfodir() + "/RECORD.p7s") ||
+           (name == dotdistinfodir() + "/RECORD.jws");
+}
+
 } // namespace crosswrench

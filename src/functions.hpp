@@ -13,6 +13,7 @@ bool isversionnumber(const std::string&);
 bool iswheelfilenamevalid(const std::string&);
 bool minimumdistinfofiles(libzippp::ZipArchive&);
 std::string base64urlsafenopad(std::string);
+bool isrecordfilenames(std::string);
 } // namespace crosswrench
 
 #endif
