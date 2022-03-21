@@ -50,6 +50,14 @@ execute()
         return EXIT_FAILURE;
     }
 
+    if (!minimumdistinfofiles(wheelfile)) {
+        std::cerr
+          << config::instance()->get_value("wheel")
+          << " is an invalid wheelfile since it is missing required files"
+          << std::endl;
+        return EXIT_FAILURE;
+    }
+
     try {
         wheel wheel_obj{
             wheelfile.getEntry(dotdistinfodir() + "/WHEEL").readAsText()

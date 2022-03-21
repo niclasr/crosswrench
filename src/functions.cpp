@@ -107,7 +107,7 @@ iswheelfilenamevalid(const std::string &filepath)
 }
 
 bool
-miniumdistinfofiles(libzippp::ZipArchive &ar)
+minimumdistinfofiles(libzippp::ZipArchive &ar)
 {
     std::array<std::string, 3> reqfiles{ "/METADATA", "/RECORD", "/WHEEL" };
     auto pred = [&](std::string &filename) {
