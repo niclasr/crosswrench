@@ -4,7 +4,6 @@
 #include <libzippp.h>
 
 #include <filesystem>
-#include <sstream>
 #include <string>
 
 namespace crosswrench {
