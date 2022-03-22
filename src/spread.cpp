@@ -36,11 +36,12 @@ SOFTWARE.
 #include <string>
 
 namespace crosswrench {
-spread::spread(libzippp::ZipArchive &ar, bool _rootispurelib) :
-  destdir{ config::instance()->get_value("destdir") },
-  rootispurelib{ _rootispurelib }, outmode{ std::ios_base::binary |
-                                            std::ios_base::out },
-  wheelfile{ ar }, record2write{ dotdistinfodir() + "/RECORD,," }
+spread::spread(libzippp::ZipArchive &ar, bool _rootispurelib)
+  : wheelfile{ ar }
+  , record2write{ dotdistinfodir() + "/RECORD,," }
+  , rootispurelib{ _rootispurelib }
+  , destdir{ config::instance()->get_value("destdir") }
+  , outmode{ std::ios_base::binary | std::ios_base::out }
 {}
 
 void
