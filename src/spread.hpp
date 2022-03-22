@@ -30,8 +30,8 @@ class spread
     libzippp::ZipArchive &wheelfile;
     record record2write;
     bool rootispurelib;
-    std::map<std::string, std::function<void(libzippp::ZipEntry &)>>
-      datadirinstallers;
+    // std::map<std::string, void(*)(libzippp::ZipEntry &)>
+    //   datadirinstallers;
     std::filesystem::path destdir;
     std::ios_base::openmode outmode;
 };

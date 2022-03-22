@@ -29,6 +29,7 @@ SOFTWARE.
 #include <botan/hash.h>
 #if defined(EXTERNAL_CSV2)
 #include <csv2/reader.hpp>
+#include <csv2/writer.hpp>
 #else
 #include <csv2.hpp>
 #endif
@@ -36,6 +37,7 @@ SOFTWARE.
 #include <pystring.h>
 
 #include <array>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -151,8 +153,7 @@ record::verify(libzippp::ZipArchive &ar)
     }
 
     for (auto we : wentries) {
-        if (we.isDirectory() || isrecordfilenames(we.getName()))
-        {
+        if (we.isDirectory() || isrecordfilenames(we.getName())) {
             continue;
         }
 
@@ -199,5 +200,43 @@ record::verify(libzippp::ZipArchive &ar)
     }
 
     return true;
+}
+
+bool
+record::add(std::string filepath,
+    std::string hashtype,
+    std::string hash,
+    std::string filesize)
+{
+    std::string clean_filepath = pystring::strip(filepath, "\"");
+    if (records.count(clean_filepath) == 0) {
+        std::array<std::string, 3> values = { hashtype, hash, filesize };
+        records[clean_filepath] = values;
+
+        return true;
+    }
+
+    return false;
+}
+
+void
+record::write(bool rootispurelib, std::filesystem::path destdir)
+{
+    std::ofstream out;
+    std::filesystem::path filename = destdir;
+    filename /= rootinstallpath(rootispurelib);
+    filename /= dotdistinfodir();
+    filename /= "RECORD";
+    out.open(filename, std::ios_base::binary | std::ios_base::out);
+    csv2::Writer csv_w{out};
+    for (auto r : records) {
+        std::array<std::string, 3> content{ r.first,
+                                            r.second.at(RHASHTYPE).empty()
+                                              ? ""
+                                              : r.second.at(RHASHTYPE) + "=" +
+                                                  r.second.at(RHASHVALUE),
+                                            r.second.at(RFILESIZE) };
+        csv_w.write_row(content);
+    }
 }
 } // namespace crosswrench

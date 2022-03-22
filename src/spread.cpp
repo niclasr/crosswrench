@@ -25,6 +25,7 @@ SOFTWARE.
 #include "config.hpp"
 #include "functions.hpp"
 
+#include <botan/base64.h>
 #include <botan/hash.h>
 #include <libzippp.h>
 #include <pystring.h>
@@ -37,35 +38,35 @@ SOFTWARE.
 namespace crosswrench {
 spread::spread(libzippp::ZipArchive &ar, bool _rootispurelib) :
   destdir{ config::instance()->get_value("destdir") },
-  outmode{ std::ios_base::binary | std::ios_base::out }, wheelfile{ ar },
-  rootispurelib{ _rootispurelib }, record2write{ dotdistinfodir() +
-                                                 "/RECORD,," }
-{
-    datadirinstallers["data"] = [&](libzippp::ZipEntry &e) { installdata(e); };
-    datadirinstallers["include"] = [&](libzippp::ZipEntry &e) {
-        installinclude(e);
-    };
-    datadirinstallers["platinclude"] = [&](libzippp::ZipEntry &e) {
-        installplatinclude(e);
-    };
-    datadirinstallers["platlib"] = [&](libzippp::ZipEntry &e) {
-        installplatlib(e);
-    };
-    datadirinstallers["purelib"] = [&](libzippp::ZipEntry &e) {
-        installpurelib(e);
-    };
-    datadirinstallers["scripts"] = [&](libzippp::ZipEntry &e) {
-        installscripts(e);
-    };
-}
+  rootispurelib{ _rootispurelib }, outmode{ std::ios_base::binary |
+                                            std::ios_base::out },
+  wheelfile{ ar }, record2write{ dotdistinfodir() + "/RECORD,," }
+{}
 
 void
 spread::install()
 {
+    /*  datadirinstallers["data"] = &installdata;
+      datadirinstallers["include"] = [&](libzippp::ZipEntry &e) {
+          installinclude(e);
+      };
+      datadirinstallers["platinclude"] = [&](libzippp::ZipEntry &e) {
+          installplatinclude(e);
+      };
+      datadirinstallers["platlib"] = [&](libzippp::ZipEntry &e) {
+          installplatlib(e);
+      };
+      datadirinstallers["purelib"] = [&](libzippp::ZipEntry &e) {
+          installpurelib(e);
+      };
+      datadirinstallers["scripts"] = [&](libzippp::ZipEntry &e) {
+          installscripts(e);
+      };*/
     auto files = wheelfile.getEntries();
     for (auto file : files) {
         installentry(file);
     }
+    record2write.write(rootispurelib, destdir);
 }
 
 void
@@ -88,7 +89,7 @@ spread::installentry(libzippp::ZipEntry &entry)
         return;
     }
 
-    if (pystring::startswith(entry.getName(), dotdistinfodir())) {
+    if (pystring::startswith(entry.getName(), dotdatadir())) {
         installdotdatadir(entry);
     }
     else {
@@ -118,13 +119,10 @@ spread::installroot(libzippp::ZipEntry &entry)
     std::error_code ec;
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create("SHA-256");
-    std::string installloc = rootispurelib ? "purelib" : "platlib";
 
-    std::filesystem::path installloc_path{ config::instance()->get_value(
-      installloc) };
     std::filesystem::path file{ entry.getName() };
     std::filesystem::path filepath = destdir;
-    filepath /= installloc_path.relative_path();
+    filepath /= rootinstallpath(rootispurelib);
     filepath /= file;
     std::filesystem::path dirpath = filepath;
     dirpath.remove_filename();
@@ -140,9 +138,16 @@ spread::installroot(libzippp::ZipEntry &entry)
     };
 
     // debugging
-    std::cout << entry.getName() << " -> " << pystring::strip(filepath, "\"") << std::endl;
+    std::cout << entry.getName() << " -> " << pystring::strip(filepath, "\"")
+              << std::endl;
 
     wheelfile.readEntry(entry, writer);
+    output_p.close();
+
+    record2write.add(entry.getName(),
+                     "sha256",
+                     base64urlsafenopad(Botan::base64_encode(hasher->final())),
+                     std::to_string(std::filesystem::file_size(filepath)));
 }
 
 void

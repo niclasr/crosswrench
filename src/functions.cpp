@@ -133,4 +133,13 @@ isrecordfilenames(std::string name)
            (name == dotdistinfodir() + "/RECORD.jws");
 }
 
+std::filesystem::path
+rootinstallpath(bool rootispurelib)
+{
+    std::filesystem::path thepath;
+    std::string rootinstall = rootispurelib ? "purelib" : "platlib";
+    thepath = config::instance()->get_value(rootinstall);
+    return thepath.relative_path();
+}
+
 } // namespace crosswrench
