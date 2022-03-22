@@ -73,56 +73,58 @@ record::record(std::string content)
             if (filepath == (dotdistinfodir() + "/RECORD")) {
                 // the RECORD file itself, special case
                 from_csv[0] = filepath;
-                continue;
             }
-            unsigned int cell_index = 0;
-            for (const auto cell : row) {
-                switch (cell_index) {
-                    case 0:
-                        cell.read_value(from_csv[0]);
-                        break;
-                    case 1: {
-                        std::vector<std::string> result;
-                        std::string c_value;
-                        hashlib2botan h2b;
-                        cell.read_value(c_value);
-                        pystring::partition(c_value, "=", result);
-                        if (result[1].empty()) {
+            else {
+                unsigned int cell_index = 0;
+                for (const auto cell : row) {
+                    switch (cell_index) {
+                        case 0:
+                            cell.read_value(from_csv[0]);
+                            break;
+                        case 1: {
+                            std::vector<std::string> result;
+                            std::string c_value;
+                            hashlib2botan h2b;
+                            cell.read_value(c_value);
+                            pystring::partition(c_value, "=", result);
+                            if (result[1].empty()) {
+                                throw std::string("Record invalid, invalid "
+                                                  "syntax in hash cell");
+                            }
+                            std::string hashtype = pystring::lower(result[0]);
+                            if (!h2b.available(hashtype)) {
+                                throw std::string("RECORD uses an hash type ") +
+                                  hashtype +
+                                  std::string(" that is not supported") +
+                                  std::string(" by crosswrench");
+                            }
+                            std::string hashvalue = result[2];
+                            if (!isbase64urlsafenopad(hashvalue)) {
+                                throw std::string("hash in RECORD is not a "
+                                                  "base64 encoded string");
+                            }
+                            from_csv[1] = hashtype;
+                            from_csv[2] = hashvalue;
+                            break;
+                        }
+                        case 2: {
+                            std::string file_size;
+                            cell.read_value(file_size);
+                            if (!pystring::isdigit(file_size)) {
+                                throw std::string(
+                                  "RECORD invalid, size cell do") +
+                                  std::string(" not only consist of digits");
+                            }
+                            from_csv[3] = file_size;
+                            break;
+                        }
+                        default:
                             throw std::string(
-                              "Record invalid, invalid syntax in hash cell");
-                        }
-                        std::string hashtype = pystring::lower(result[0]);
-                        if (!h2b.available(hashtype)) {
-                            throw std::string("RECORD uses an hash type ") +
-                              hashtype + std::string(" that is not supported") +
-                              std::string(" by crosswrench");
-                        }
-                        std::string hashvalue = result[2];
-                        if (!isbase64urlsafenopad(hashvalue)) {
-                            throw std::string(
-                              "hash in RECORD is not a base64 encoded string");
-                        }
-                        from_csv[1] = hashtype;
-                        from_csv[2] = hashvalue;
-                        break;
+                              "RECORD invalid, to many cells in row");
                     }
-                    case 2: {
-                        std::string file_size;
-                        cell.read_value(file_size);
-                        if (!pystring::isdigit(file_size)) {
-                            throw std::string("RECORD invalid, size cell do") +
-                              std::string(" not only consist of digits");
-                        }
-                        from_csv[3] = file_size;
-                        break;
-                    }
-                    default:
-                        throw std::string(
-                          "RECORD invalid, to many cells in row");
+                    cell_index++;
                 }
-                cell_index++;
             }
-
             if (records.count(from_csv[0]) == 1) {
                 throw std::string(
                   "RECORD contains the same file multiple times");
@@ -204,9 +206,9 @@ record::verify(libzippp::ZipArchive &ar)
 
 bool
 record::add(std::string filepath,
-    std::string hashtype,
-    std::string hash,
-    std::string filesize)
+            std::string hashtype,
+            std::string hash,
+            std::string filesize)
 {
     std::string clean_filepath = pystring::strip(filepath, "\"");
     if (records.count(clean_filepath) == 0) {
@@ -228,7 +230,7 @@ record::write(bool rootispurelib, std::filesystem::path destdir)
     filename /= dotdistinfodir();
     filename /= "RECORD";
     out.open(filename, std::ios_base::binary | std::ios_base::out);
-    csv2::Writer csv_w{out};
+    csv2::Writer csv_w{ out };
     for (auto r : records) {
         std::array<std::string, 3> content{ r.first,
                                             r.second.at(RHASHTYPE).empty()
