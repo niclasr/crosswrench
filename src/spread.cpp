@@ -46,22 +46,6 @@ spread::spread(libzippp::ZipArchive &ar, bool _rootispurelib) :
 void
 spread::install()
 {
-    /*  datadirinstallers["data"] = &installdata;
-      datadirinstallers["include"] = [&](libzippp::ZipEntry &e) {
-          installinclude(e);
-      };
-      datadirinstallers["platinclude"] = [&](libzippp::ZipEntry &e) {
-          installplatinclude(e);
-      };
-      datadirinstallers["platlib"] = [&](libzippp::ZipEntry &e) {
-          installplatlib(e);
-      };
-      datadirinstallers["purelib"] = [&](libzippp::ZipEntry &e) {
-          installpurelib(e);
-      };
-      datadirinstallers["scripts"] = [&](libzippp::ZipEntry &e) {
-          installscripts(e);
-      };*/
     auto files = wheelfile.getEntries();
     for (auto file : files) {
         installentry(file);
@@ -70,15 +54,11 @@ spread::install()
 }
 
 void
-spread::installdata(libzippp::ZipEntry &entry)
-{}
-
-void
 spread::installdotdatadir(libzippp::ZipEntry &entry)
 {
     std::vector<std::string> dirnames;
     pystring::split(entry.getName(), dirnames, "/");
-    // datadirinstallers[dirnames[1]](entry);
+    installfile(entry, installpath(dirnames[1]));
 }
 
 void
@@ -93,28 +73,12 @@ spread::installentry(libzippp::ZipEntry &entry)
         installdotdatadir(entry);
     }
     else {
-        installroot(entry);
+        installfile(entry, rootinstallpath(rootispurelib));
     }
 }
 
 void
-spread::installinclude(libzippp::ZipEntry &entry)
-{}
-
-void
-spread::installplatinclude(libzippp::ZipEntry &entry)
-{}
-
-void
-spread::installplatlib(libzippp::ZipEntry &entry)
-{}
-
-void
-spread::installpurelib(libzippp::ZipEntry &entry)
-{}
-
-void
-spread::installroot(libzippp::ZipEntry &entry)
+spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path prefix)
 {
     std::error_code ec;
     std::ofstream output_p;
@@ -122,7 +86,7 @@ spread::installroot(libzippp::ZipEntry &entry)
 
     std::filesystem::path file{ entry.getName() };
     std::filesystem::path filepath = destdir;
-    filepath /= rootinstallpath(rootispurelib);
+    filepath /= prefix;
     filepath /= file;
     std::filesystem::path dirpath = filepath;
     dirpath.remove_filename();
@@ -149,9 +113,5 @@ spread::installroot(libzippp::ZipEntry &entry)
                      base64urlsafenopad(Botan::base64_encode(hasher->final())),
                      std::to_string(std::filesystem::file_size(filepath)));
 }
-
-void
-spread::installscripts(libzippp::ZipEntry &entry)
-{}
 
 } // namespace crosswrench

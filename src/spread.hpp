@@ -17,21 +17,13 @@ class spread
     void install();
 
   private:
-    void installdata(libzippp::ZipEntry &);
     void installdotdatadir(libzippp::ZipEntry &);
     void installentry(libzippp::ZipEntry &);
-    void installinclude(libzippp::ZipEntry &);
-    void installplatinclude(libzippp::ZipEntry &);
-    void installplatlib(libzippp::ZipEntry &);
-    void installpurelib(libzippp::ZipEntry &);
-    void installroot(libzippp::ZipEntry &);
-    void installscripts(libzippp::ZipEntry &);
+    void installfile(libzippp::ZipEntry &, std::filesystem::path);
 
     libzippp::ZipArchive &wheelfile;
     record record2write;
     bool rootispurelib;
-    // std::map<std::string, void(*)(libzippp::ZipEntry &)>
-    //   datadirinstallers;
     std::filesystem::path destdir;
     std::ios_base::openmode outmode;
 };

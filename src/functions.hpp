@@ -17,6 +17,7 @@ bool minimumdistinfofiles(libzippp::ZipArchive &);
 std::string base64urlsafenopad(std::string);
 bool isrecordfilenames(std::string);
 std::filesystem::path rootinstallpath(bool);
+std::filesystem::path installpath(std::string);
 } // namespace crosswrench
 
 #endif

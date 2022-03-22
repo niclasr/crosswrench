@@ -136,9 +136,14 @@ isrecordfilenames(std::string name)
 std::filesystem::path
 rootinstallpath(bool rootispurelib)
 {
-    std::filesystem::path thepath;
     std::string rootinstall = rootispurelib ? "purelib" : "platlib";
-    thepath = config::instance()->get_value(rootinstall);
+    return installpath(rootinstall);
+}
+
+std::filesystem::path
+installpath(std::string pythondir)
+{
+    std::filesystem::path thepath = config::instance()->get_value(pythondir);
     return thepath.relative_path();
 }
 
