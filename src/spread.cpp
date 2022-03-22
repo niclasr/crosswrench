@@ -28,6 +28,7 @@ SOFTWARE.
 #include <botan/base64.h>
 #include <botan/hash.h>
 #include <libzippp.h>
+#include <pstream.h>
 #include <pystring.h>
 
 #include <filesystem>
@@ -45,12 +46,29 @@ spread::spread(libzippp::ZipArchive &ar, bool _rootispurelib)
 {}
 
 void
+spread::compile()
+{
+    std::cout << "Byte-compiling .py files" << std::endl;
+    for (auto p : py_files) {
+        const std::string cmdarg{ " -m compileall " };
+        std::string output;
+        std::string pyfile = p;
+        auto pythonint = config::instance()->get_value("python");
+        auto cmd = pythonint + cmdarg + pyfile;
+        if (!get_cmd_output(cmd, output)) {
+            throw std::string{"Failed to compile: " + pyfile};
+        }
+    }
+}
+
+void
 spread::install()
 {
     auto files = wheelfile.getEntries();
     for (auto file : files) {
         installentry(file);
     }
+    compile();
     record2write.write(rootispurelib, destdir);
 }
 
@@ -108,6 +126,10 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path prefix)
 
     wheelfile.readEntry(entry, writer);
     output_p.close();
+
+    if (pystring::endswith(entry.getName(), ".py")) {
+        py_files.insert(filepath);
+    }
 
     record2write.add(entry.getName(),
                      "sha256",

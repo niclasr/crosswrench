@@ -20,7 +20,6 @@ class config
     config &operator=(const config &) = delete;
 
   private:
-    bool get_cmd_output(std::string &, std::string &);
     bool set_python_value(std::string, cxxopts::ParseResult &);
     bool verify_python_interpreter(cxxopts::ParseResult &pr);
     config() = default;

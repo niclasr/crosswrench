@@ -22,7 +22,8 @@ SOFTWARE.
 
 #include "config.hpp"
 
-#include <pstream.h>
+#include "functions.hpp"
+
 #include <pystring.h>
 
 #include <unistd.h>
@@ -116,36 +117,6 @@ config::set_python_value(std::string var, cxxopts::ParseResult &pr)
     }
 
     new_db[var] = pystring::strip(output);
-
-    return true;
-}
-
-bool
-config::get_cmd_output(std::string &cmd, std::string &output)
-{
-    unsigned int exit_rounds = 0;
-    redi::ipstream in(cmd);
-    std::getline(in.out(), output);
-    in.close();
-
-    while (!in.rdbuf()->exited()) {
-        if (exit_rounds > 4) {
-            if (in.rdbuf()->kill() == nullptr) {
-                in.rdbuf()->kill(SIGKILL);
-            }
-            std::cerr << "the command: " << in.command()
-                      << " did not finish in time" << std::endl;
-            return false;
-        }
-        usleep(250000);
-        exit_rounds++;
-    }
-
-    if (in.rdbuf()->status() != 0) {
-        std::cerr << "the command: " << in.command() << " did not exit with 0"
-                  << std::endl;
-        return false;
-    }
 
     return true;
 }

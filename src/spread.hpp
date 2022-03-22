@@ -6,6 +6,7 @@
 #include <libzippp.h>
 
 #include <filesystem>
+#include <set>
 #include <string>
 
 namespace crosswrench {
@@ -17,6 +18,7 @@ class spread
     void install();
 
   private:
+    void compile();
     void installdotdatadir(libzippp::ZipEntry &);
     void installentry(libzippp::ZipEntry &);
     void installfile(libzippp::ZipEntry &, std::filesystem::path);
@@ -26,6 +28,7 @@ class spread
     bool rootispurelib;
     std::filesystem::path destdir;
     std::ios_base::openmode outmode;
+    std::set<std::filesystem::path> py_files;
 };
 
 } // namespace crosswrench
