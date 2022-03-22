@@ -49,15 +49,18 @@ void
 spread::compile()
 {
     std::cout << "Byte-compiling .py files" << std::endl;
+    std::string files;
     for (auto p : py_files) {
-        const std::string cmdarg{ " -m compileall " };
-        std::string output;
         std::string pyfile = p;
-        auto pythonint = config::instance()->get_value("python");
-        auto cmd = pythonint + cmdarg + pyfile;
-        if (!get_cmd_output(cmd, output)) {
-            throw std::string{"Failed to compile: " + pyfile};
-        }
+        files += pyfile;
+        files += "\n";
+    }
+    const std::string cmdarg{ " -m compileall -i -" };
+    std::string output;
+    auto pythonint = config::instance()->get_value("python");
+    auto cmd = pythonint + cmdarg;
+    if (!get_cmd_output(cmd, output, files)) {
+        throw std::string{ "Failed to compile .py files"};
     }
 }
 

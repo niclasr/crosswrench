@@ -112,7 +112,7 @@ config::set_python_value(std::string var, cxxopts::ParseResult &pr)
     cmd += var;
     cmd += pcode_end;
 
-    if (!get_cmd_output(cmd, output)) {
+    if (!get_cmd_output(cmd, output, "")) {
         return false;
     }
 
@@ -141,7 +141,7 @@ config::verify_python_interpreter(cxxopts::ParseResult &pr)
     std::string output;
     std::string cmd = pr["python"].as<std::string>();
     cmd += " --version";
-    if (get_cmd_output(cmd, output)) {
+    if (get_cmd_output(cmd, output, "")) {
         if (pystring::startswith(pystring::lower(output), "python ")) {
             return true;
         }

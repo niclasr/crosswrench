@@ -149,10 +149,17 @@ installpath(std::string pythondir)
 }
 
 bool
-get_cmd_output(std::string &cmd, std::string &output)
+get_cmd_output(std::string &cmd, std::string &output, std::string pipein)
 {
     unsigned int exit_rounds = 0;
-    redi::ipstream in(cmd);
+    redi::pstreams::pmode pm =
+      pipein.empty() ? redi::pstreams::pstdout
+                     : redi::pstreams::pstdin | redi::pstreams::pstdout;
+    redi::pstream in(cmd, pm);
+    if (!pipein.empty()) {
+        in << pipein;
+        in << redi::peof;
+    }
     std::getline(in.out(), output);
     in.close();
 
