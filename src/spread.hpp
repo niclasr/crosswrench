@@ -21,7 +21,7 @@ class spread
     void compile();
     void installdotdatadir(libzippp::ZipEntry &);
     void installentry(libzippp::ZipEntry &);
-    void installfile(libzippp::ZipEntry &, std::filesystem::path);
+    void installfile(libzippp::ZipEntry &, std::filesystem::path, bool = false);
 
     libzippp::ZipArchive &wheelfile;
     record record2write;

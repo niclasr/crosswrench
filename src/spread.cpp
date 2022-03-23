@@ -60,7 +60,7 @@ spread::compile()
     auto pythonint = config::instance()->get_value("python");
     auto cmd = pythonint + cmdarg;
     if (!get_cmd_output(cmd, output, files)) {
-        throw std::string{ "Failed to compile .py files"};
+        throw std::string{ "Failed to compile .py files" };
     }
 }
 
@@ -80,7 +80,7 @@ spread::installdotdatadir(libzippp::ZipEntry &entry)
 {
     std::vector<std::string> dirnames;
     pystring::split(entry.getName(), dirnames, "/");
-    installfile(entry, installpath(dirnames[1]));
+    installfile(entry, installpath(dirnames[1]), dirnames[1] == "scripts");
 }
 
 void
@@ -100,8 +100,11 @@ spread::installentry(libzippp::ZipEntry &entry)
 }
 
 void
-spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path prefix)
+spread::installfile(libzippp::ZipEntry &entry,
+                    std::filesystem::path prefix,
+                    bool script)
 {
+    bool setexec = script;
     std::error_code ec;
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create("SHA-256");
@@ -129,6 +132,14 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path prefix)
 
     wheelfile.readEntry(entry, writer);
     output_p.close();
+
+    if (setexec) {
+        std::filesystem::permissions(filepath,
+                                     std::filesystem::perms::owner_exec |
+                                       std::filesystem::perms::group_exec |
+                                       std::filesystem::perms::others_exec,
+                                     std::filesystem::perm_options::add);
+    }
 
     if (pystring::endswith(entry.getName(), ".py")) {
         py_files.insert(filepath);
