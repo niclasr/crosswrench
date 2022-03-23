@@ -141,7 +141,7 @@ spread::installfile(libzippp::ZipEntry &entry,
                                      std::filesystem::perm_options::add);
     }
 
-    if (pystring::endswith(entry.getName(), ".py")) {
+    if (pystring::endswith(entry.getName(), ".py") && !script) {
         py_files.insert(filepath);
     }
 
