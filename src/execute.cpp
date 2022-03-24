@@ -27,6 +27,7 @@ SOFTWARE.
 #include "wheel.hpp"
 
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 
 namespace crosswrench {
@@ -75,6 +76,15 @@ execute()
     }
 
     try {
+        std::filesystem::create_directories(
+          config::instance()->get_value("destdir"));
+    }
+    catch (std::filesystem::filesystem_error &e) {
+        std::cerr << "destdir argument invalid: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    try {
         wheel wheel_obj{
             wheelfile.getEntry(dotdistinfodir() + "/WHEEL").readAsText()
         };
@@ -103,6 +113,10 @@ execute()
     }
     catch (std::string s) {
         std::cerr << s << std::endl;
+        return EXIT_FAILURE;
+    }
+    catch (std::filesystem::filesystem_error &e) {
+        std::cerr << "crosswrench install: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
 

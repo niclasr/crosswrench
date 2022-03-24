@@ -113,7 +113,6 @@ spread::installfile(libzippp::ZipEntry &entry,
 {
     bool setexec = script;
     bool replace_python = script;
-    std::error_code ec;
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create("SHA-256");
 
@@ -123,7 +122,7 @@ spread::installfile(libzippp::ZipEntry &entry,
     std::filesystem::path dirpath = filepath;
     dirpath.remove_filename();
 
-    std::filesystem::create_directories(dirpath, ec);
+    std::filesystem::create_directories(dirpath);
 
     output_p.open(filepath, outmode);
 
