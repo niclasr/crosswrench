@@ -3,6 +3,7 @@
 
 #include "record.hpp"
 
+#include <botan/hash.h>
 #include <libzippp.h>
 
 #include <filesystem>
@@ -22,6 +23,10 @@ class spread
     void installdotdatadir(libzippp::ZipEntry &);
     void installentry(libzippp::ZipEntry &);
     void installfile(libzippp::ZipEntry &, std::filesystem::path, bool = false);
+    uintptr_t writereplacedpython(const void *,
+                                  libzippp_uint64,
+                                  std::unique_ptr<Botan::HashFunction> &,
+                                  std::ofstream &);
 
     libzippp::ZipArchive &wheelfile;
     record record2write;

@@ -31,6 +31,7 @@ SOFTWARE.
 #include <pstream.h>
 #include <pystring.h>
 
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <ios>
@@ -87,7 +88,7 @@ void
 spread::installentry(libzippp::ZipEntry &entry)
 {
     // files that should not be installed
-    if (isrecordfilenames(entry.getName())) {
+    if (isrecordfilenames(entry.getName()) || entry.isDirectory()) {
         return;
     }
 
@@ -105,6 +106,7 @@ spread::installfile(libzippp::ZipEntry &entry,
                     bool script)
 {
     bool setexec = script;
+    bool replace_python = script;
     std::error_code ec;
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create("SHA-256");
@@ -121,6 +123,13 @@ spread::installfile(libzippp::ZipEntry &entry,
     output_p.open(filepath, outmode);
 
     auto writer = [&](const void *data, libzippp_uint64 data_size) {
+        if (replace_python) {
+            auto rb = writereplacedpython(data, data_size, hasher, output_p);
+            data = (const char *)data + rb;
+            data_size -= rb;
+            replace_python = false;
+        }
+
         hasher->update((const uint8_t *)data, data_size);
         output_p.write((const char *)data, data_size);
         return bool(output_p);
@@ -149,6 +158,35 @@ spread::installfile(libzippp::ZipEntry &entry,
                      "sha256",
                      base64urlsafenopad(Botan::base64_encode(hasher->final())),
                      std::to_string(std::filesystem::file_size(filepath)));
+}
+
+uintptr_t
+spread::writereplacedpython(const void *data,
+                            libzippp_uint64 data_size,
+                            std::unique_ptr<Botan::HashFunction> &hasher,
+                            std::ofstream &output_p)
+{
+    const char p_replace[] = "#!python";
+    const char p_replacew[] = "#!pythonw";
+    const uintptr_t w_pos = 8;
+    uintptr_t replaced_bytes = 0;
+
+    if (data_size > strlen(p_replace)) {
+        if (std::memcmp(p_replace, data, std::strlen(p_replace)) == 0) {
+            auto hashbangpythoninterp =
+              "#!" + config::instance()->get_value("python");
+            replaced_bytes = ((const char *)data)[w_pos] == 'w'
+                               ? std::strlen(p_replacew)
+                               : std::strlen(p_replace);
+
+            hasher->update((const uint8_t *)hashbangpythoninterp.c_str(),
+                           hashbangpythoninterp.size());
+            output_p.write(hashbangpythoninterp.c_str(),
+                           hashbangpythoninterp.size());
+        }
+    }
+
+    return replaced_bytes;
 }
 
 } // namespace crosswrench
