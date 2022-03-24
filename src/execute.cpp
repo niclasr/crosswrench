@@ -59,6 +59,13 @@ execute()
         return EXIT_FAILURE;
     }
 
+    if (wheelhasabsolutepaths(wheelfile)) {
+        std::cerr << config::instance()->get_value("wheel")
+                  << " is an invalid wheelfile since it contains absolute paths"
+                  << std::endl;
+        return EXIT_FAILURE;
+    }
+
     try {
         wheel wheel_obj{
             wheelfile.getEntry(dotdistinfodir() + "/WHEEL").readAsText()

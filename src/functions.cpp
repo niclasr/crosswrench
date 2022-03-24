@@ -185,4 +185,16 @@ get_cmd_output(std::string &cmd, std::string &output, std::string pipein)
     return true;
 }
 
+bool
+wheelhasabsolutepaths(libzippp::ZipArchive &ar)
+{
+    auto pred = [](libzippp::ZipEntry &e) {
+        return pystring::startswith(e.getName(), "/");
+    };
+
+    auto entries = ar.getEntries();
+
+    return std::any_of(entries.begin(), entries.end(), pred);
+}
+
 } // namespace crosswrench

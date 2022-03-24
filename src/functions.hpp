@@ -18,6 +18,7 @@ bool isrecordfilenames(std::string);
 std::filesystem::path rootinstallpath(bool);
 std::filesystem::path installpath(std::string);
 bool get_cmd_output(std::string &, std::string &, std::string);
+bool wheelhasabsolutepaths(libzippp::ZipArchive &);
 } // namespace crosswrench
 
 #endif
