@@ -81,7 +81,12 @@ spread::installdotdatadir(libzippp::ZipEntry &entry)
 {
     std::vector<std::string> dirnames;
     pystring::split(entry.getName(), dirnames, "/");
-    installfile(entry, installpath(dirnames[1]), dirnames[1] == "scripts");
+    std::vector<std::string> dirnames_install{ dirnames.begin() + 2,
+                                               dirnames.end() };
+    installfile(entry,
+                installpath(dirnames[1]),
+                pystring::join("/", dirnames_install),
+                dirnames[1] == "scripts");
 }
 
 void
@@ -96,13 +101,14 @@ spread::installentry(libzippp::ZipEntry &entry)
         installdotdatadir(entry);
     }
     else {
-        installfile(entry, rootinstallpath(rootispurelib));
+        installfile(entry, rootinstallpath(rootispurelib), entry.getName());
     }
 }
 
 void
 spread::installfile(libzippp::ZipEntry &entry,
                     std::filesystem::path prefix,
+                    std::filesystem::path file,
                     bool script)
 {
     bool setexec = script;
@@ -111,7 +117,6 @@ spread::installfile(libzippp::ZipEntry &entry,
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create("SHA-256");
 
-    std::filesystem::path file{ entry.getName() };
     std::filesystem::path filepath = destdir;
     filepath /= prefix;
     filepath /= file;
