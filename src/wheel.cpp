@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "wheel.hpp"
 
+#include "config.hpp"
+
 #include <pystring.h>
 
 #include <algorithm>
@@ -33,6 +35,9 @@ SOFTWARE.
 namespace crosswrench {
 
 namespace {
+const unsigned long SupportedWheelVersionMajor = 1;
+const unsigned long SupportedWheelVersionMinor = 0;
+
 // helper function
 uint8_t mandatory = 0b1;
 uint8_t only_once = 0b10;
@@ -129,6 +134,29 @@ unsigned long
 wheel::version_minor()
 {
     return WheelVersionMinor;
+}
+
+bool
+wheel::wheel_version_unsupported()
+{
+    if (WheelVersionMajor > SupportedWheelVersionMajor) {
+        std::cerr << config::instance()->get_value("wheel") << " Wheel version "
+                  << WheelVersionMajor << "." << WheelVersionMinor
+                  << " is to new to be supported by this version of crosswrench"
+                  << std::endl;
+        return true;
+    }
+
+    if (WheelVersionMinor > SupportedWheelVersionMinor) {
+        std::cout << config::instance()->get_value("wheel") << " Wheel version "
+                  << WheelVersionMajor << "." << WheelVersionMinor
+                  << "is greater than crosswrench supported Whell version "
+                  << SupportedWheelVersionMajor << "."
+                  << SupportedWheelVersionMinor << " the wheel file might not"
+                  << " be installed correctly" << std::endl;
+    }
+
+    return false;
 }
 
 } // namespace crosswrench

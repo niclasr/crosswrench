@@ -14,6 +14,7 @@ class wheel
     bool root_is_purelib();
     unsigned long version_major();
     unsigned long version_minor();
+    bool wheel_version_unsupported();
 
   private:
     bool RootIsPurelib;

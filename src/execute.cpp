@@ -67,6 +67,10 @@ execute()
             wheelfile.getEntry(dotdistinfodir() + "/RECORD").readAsText()
         };
 
+        if (wheel_obj.wheel_version_unsupported()) {
+            return EXIT_FAILURE;
+        }
+
         if (!record_obj.verify(wheelfile)) {
             std::cerr << config::instance()->get_value("wheel")
                       << " is an invalid wheel file since the files failed "
