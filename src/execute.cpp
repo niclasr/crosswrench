@@ -66,6 +66,14 @@ execute()
         return EXIT_FAILURE;
     }
 
+    if (!onlyalloweddotdatapaths(wheelfile)) {
+        std::cerr << config::instance()->get_value("wheel")
+                  << " is an invalid wheelfile since it contains paths in "
+                  << dotdatadir() << " that crosswrench doesn't support"
+                  << std::endl;
+        return EXIT_FAILURE;
+    }
+
     try {
         wheel wheel_obj{
             wheelfile.getEntry(dotdistinfodir() + "/WHEEL").readAsText()

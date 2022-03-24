@@ -84,7 +84,7 @@ spread::installdotdatadir(libzippp::ZipEntry &entry)
     std::vector<std::string> dirnames_install{ dirnames.begin() + 2,
                                                dirnames.end() };
     installfile(entry,
-                installpath(dirnames[1]),
+                dotdatainstallpath(dirnames[1]),
                 pystring::join("/", dirnames_install),
                 dirnames[1] == "scripts");
 }

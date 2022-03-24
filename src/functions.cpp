@@ -142,6 +142,14 @@ rootinstallpath(bool rootispurelib)
 }
 
 std::filesystem::path
+dotdatainstallpath(std::string keydir)
+{
+    std::string dotdatainstall =
+      config::instance()->dotdatakeydir2config(keydir);
+    return installpath(dotdatainstall);
+}
+
+std::filesystem::path
 installpath(std::string pythondir)
 {
     std::filesystem::path thepath = config::instance()->get_value(pythondir);
@@ -195,6 +203,37 @@ wheelhasabsolutepaths(libzippp::ZipArchive &ar)
     auto entries = ar.getEntries();
 
     return std::any_of(entries.begin(), entries.end(), pred);
+}
+
+bool
+onlyalloweddotdatapaths(libzippp::ZipArchive &ar)
+{
+    auto entries = ar.getEntries();
+
+    for (auto entry : entries) {
+        if (entry.isDirectory()) {
+            continue;
+        }
+
+        if (pystring::startswith(entry.getName(), dotdatadir() + "/")) {
+            std::vector<std::string> dirnames;
+            pystring::split(entry.getName(), dirnames, "/");
+            auto cfgname =
+              config::instance()->dotdatakeydir2config(dirnames[1]);
+            if (cfgname.empty()) {
+                return false;
+            }
+
+            // check that the fileentry is under a direcory in .data
+            if (!pystring::startswith(entry.getName(),
+                                      dirnames[0] + "/" + dirnames[1] + "/"))
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 } // namespace crosswrench

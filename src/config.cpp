@@ -53,6 +53,14 @@ const std::array<std::string, 8> python_paths{ "data",        "include",
                                                "platstdlib",  "purelib",
                                                "scripts",     "stdlib" };
 
+config::config()
+  : dotdatakeydir2config_map{ { "data", "data" },
+                              { "headers", "include" },
+                              { "platlib", "platlib" },
+                              { "purelib", "purelib" },
+                              { "scripts", "scripts" } }
+{}
+
 config *
 config::instance()
 {
@@ -150,6 +158,16 @@ config::verify_python_interpreter(cxxopts::ParseResult &pr)
               << " is not a valid python interpreter" << std::endl;
 
     return false;
+}
+
+std::string
+config::dotdatakeydir2config(std::string &keydir)
+{
+    if (dotdatakeydir2config_map.count(keydir) == 0) {
+        return std::string{};
+    }
+
+    return dotdatakeydir2config_map.at(keydir);
 }
 
 } // namespace crosswrench

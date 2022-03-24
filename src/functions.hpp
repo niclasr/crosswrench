@@ -19,6 +19,8 @@ std::filesystem::path rootinstallpath(bool);
 std::filesystem::path installpath(std::string);
 bool get_cmd_output(std::string &, std::string &, std::string);
 bool wheelhasabsolutepaths(libzippp::ZipArchive &);
+bool onlyalloweddotdatapaths(libzippp::ZipArchive &ar);
+std::filesystem::path dotdatainstallpath(std::string);
 } // namespace crosswrench
 
 #endif
