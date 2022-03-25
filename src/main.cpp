@@ -59,7 +59,15 @@ main(int argc, char *argv[])
     // clang-format on
 
     options.allow_unrecognised_options();
-    auto result = options.parse(argc, argv);
+    cxxopts::ParseResult result;
+    try {
+        result = options.parse(argc, argv);
+    }
+    catch (cxxopts::argument_incorrect_type &e) {
+        std::cout << e.what() << ", use --help to see valid options"
+                  << std::endl;
+        return EXIT_FAILURE;
+    }
 
     if ((argc == 2 && result.count("help")) || argc == 1) {
         std::cout << options.help() << std::endl;
