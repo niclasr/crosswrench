@@ -70,55 +70,58 @@ spread::install()
 {
     auto files = wheelfile.getEntries();
     for (auto file : files) {
-        installentry(file);
+        // files that should not be installed
+        if (isrecordfilenames(file.getName()) || file.isDirectory()) {
+            continue;
+        }
+
+        installfile(file, installpath(file));
     }
     compile();
     record2write.write(rootispurelib, destdir);
 }
 
-void
-spread::installdotdatadir(libzippp::ZipEntry &entry)
+std::filesystem::path
+spread::createinstallpath(std::filesystem::path prefix, std::filesystem::path end)
+{
+    std::filesystem::path filepath = destdir;
+    filepath /= prefix;
+    filepath /= end;
+    return filepath;
+}
+
+std::filesystem::path
+spread::dotdatadirinstallpath(libzippp::ZipEntry &entry)
 {
     std::vector<std::string> dirnames;
     pystring::split(entry.getName(), dirnames, "/");
     std::vector<std::string> dirnames_install{ dirnames.begin() + 2,
                                                dirnames.end() };
-    installfile(entry,
-                dotdatainstallpath(dirnames[1]),
-                pystring::join("/", dirnames_install),
-                dirnames[1] == "scripts");
+
+    return createinstallpath(dotdatainstalldir(dirnames[1]),
+                             pystring::join("/", dirnames_install));
 }
 
-void
-spread::installentry(libzippp::ZipEntry &entry)
+std::filesystem::path
+spread::installpath(libzippp::ZipEntry &entry)
 {
-    // files that should not be installed
-    if (isrecordfilenames(entry.getName()) || entry.isDirectory()) {
-        return;
-    }
-
     if (pystring::startswith(entry.getName(), dotdatadir())) {
-        installdotdatadir(entry);
+        return dotdatadirinstallpath(entry);
     }
-    else {
-        installfile(entry, rootinstallpath(rootispurelib), entry.getName());
-    }
+
+    // root
+    return createinstallpath(rootinstalldir(rootispurelib), entry.getName());
 }
 
 void
-spread::installfile(libzippp::ZipEntry &entry,
-                    std::filesystem::path prefix,
-                    std::filesystem::path file,
-                    bool script)
+spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
 {
-    bool setexec = script;
-    bool replace_python = script;
+    bool replace_python = isscript(entry);
+    bool setexec = isscript(entry);
+
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create("SHA-256");
 
-    std::filesystem::path filepath = destdir;
-    filepath /= prefix;
-    filepath /= file;
     std::filesystem::path dirpath = filepath;
     dirpath.remove_filename();
 
@@ -154,7 +157,7 @@ spread::installfile(libzippp::ZipEntry &entry,
                                      std::filesystem::perm_options::add);
     }
 
-    if (pystring::endswith(entry.getName(), ".py") && !script) {
+    if (pystring::endswith(entry.getName(), ".py") && !isscript(entry)) {
         py_files.insert(filepath);
     }
 

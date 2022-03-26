@@ -226,7 +226,7 @@ record::write(bool rootispurelib, std::filesystem::path destdir)
 {
     std::ofstream out;
     std::filesystem::path filename = destdir;
-    filename /= rootinstallpath(rootispurelib);
+    filename /= rootinstalldir(rootispurelib);
     filename /= dotdistinfodir();
     filename /= "RECORD";
     out.open(filename, std::ios_base::binary | std::ios_base::out);

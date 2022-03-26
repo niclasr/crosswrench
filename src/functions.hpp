@@ -15,12 +15,13 @@ bool iswheelfilenamevalid(const std::string &);
 bool minimumdistinfofiles(libzippp::ZipArchive &);
 std::string base64urlsafenopad(std::string);
 bool isrecordfilenames(std::string);
-std::filesystem::path rootinstallpath(bool);
-std::filesystem::path installpath(std::string);
+std::filesystem::path rootinstalldir(bool);
+std::filesystem::path installdir(std::string);
 bool get_cmd_output(std::string &, std::string &, std::string);
 bool wheelhasabsolutepaths(libzippp::ZipArchive &);
 bool onlyalloweddotdatapaths(libzippp::ZipArchive &ar);
-std::filesystem::path dotdatainstallpath(std::string);
+std::filesystem::path dotdatainstalldir(std::string);
+bool isscript(libzippp::ZipEntry &);
 } // namespace crosswrench
 
 #endif
