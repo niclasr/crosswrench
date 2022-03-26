@@ -135,22 +135,22 @@ isrecordfilenames(std::string name)
 }
 
 std::filesystem::path
-rootinstallpath(bool rootispurelib)
+rootinstalldir(bool rootispurelib)
 {
     std::string rootinstall = rootispurelib ? "purelib" : "platlib";
-    return installpath(rootinstall);
+    return installdir(rootinstall);
 }
 
 std::filesystem::path
-dotdatainstallpath(std::string keydir)
+dotdatainstalldir(std::string keydir)
 {
     std::string dotdatainstall =
       config::instance()->dotdatakeydir2config(keydir);
-    return installpath(dotdatainstall);
+    return installdir(dotdatainstall);
 }
 
 std::filesystem::path
-installpath(std::string pythondir)
+installdir(std::string pythondir)
 {
     std::filesystem::path thepath = config::instance()->get_value(pythondir);
     return thepath.relative_path();
@@ -234,6 +234,12 @@ onlyalloweddotdatapaths(libzippp::ZipArchive &ar)
     }
 
     return true;
+}
+
+bool
+isscript(libzippp::ZipEntry &entry)
+{
+    return pystring::startswith(entry.getName(), dotdatadir() + "/scripts/");
 }
 
 } // namespace crosswrench
