@@ -66,10 +66,10 @@ record::record(std::string content)
         for (const auto row : csvr) {
             std::array<std::string, 4> from_csv = { "", "", "", "" };
             std::string filepath;
-            for (const auto cell : row) {
-                cell.read_value(filepath);
-                break;
-            }
+            auto celliter = row.begin();
+            auto firstcell = *celliter;
+            firstcell.read_value(filepath);
+
             if (filepath == (dotdistinfodir() + "/RECORD")) {
                 // the RECORD file itself, special case
                 from_csv[0] = filepath;
