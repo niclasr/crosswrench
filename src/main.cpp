@@ -37,59 +37,64 @@ bool check_options(cxxopts::ParseResult &pr);
 int
 main(int argc, char *argv[])
 {
-    cxxopts::Options options("crosswrench", "Python wheel installer");
-
-    // clang-format off
-    options.add_options()
-        ("destdir", "destination root",
-          cxxopts::value<std::string>()->implicit_value(""))
-        ("installer", "installer name",
-          cxxopts::value<std::string>()->
-          implicit_value("")->
-          default_value("crosswrench"))
-        ("prefix", "destination prefix",
-          cxxopts::value<std::string>()->implicit_value(""))
-        ("python", "path to python interpreter",
-          cxxopts::value<std::string>()->implicit_value(""))
-        ("wheel", "path to wheel file",
-          cxxopts::value<std::string>()->implicit_value(""))
-        ("license", "show license")
-        ("license-libs", "show licenses of libraries used by crosswrench")
-        ("help", "show help");
-    // clang-format on
-
-    options.allow_unrecognised_options();
-    cxxopts::ParseResult result;
     try {
-        result = options.parse(argc, argv);
+        cxxopts::Options options("crosswrench", "Python wheel installer");
+
+        // clang-format off
+        options.add_options()
+            ("destdir", "destination root",
+              cxxopts::value<std::string>()->implicit_value(""))
+            ("installer", "installer name",
+              cxxopts::value<std::string>()->
+              implicit_value("")->
+              default_value("crosswrench"))
+            ("prefix", "destination prefix",
+              cxxopts::value<std::string>()->implicit_value(""))
+            ("python", "path to python interpreter",
+              cxxopts::value<std::string>()->implicit_value(""))
+            ("wheel", "path to wheel file",
+              cxxopts::value<std::string>()->implicit_value(""))
+            ("license", "show license")
+            ("license-libs", "show licenses of libraries used by crosswrench")
+            ("help", "show help");
+        // clang-format on
+
+        options.allow_unrecognised_options();
+
+        auto result = options.parse(argc, argv);
+
+        if ((argc == 2 && result.count("help")) || argc == 1) {
+            std::cout << options.help() << std::endl;
+            return EXIT_SUCCESS;
+        }
+
+        if (argc == 2 && result.count("license")) {
+            crosswrench::show_license();
+            return EXIT_SUCCESS;
+        }
+
+        if (argc == 2 && result.count("license-libs")) {
+            crosswrench::show_license_libs();
+            return EXIT_SUCCESS;
+        }
+
+        if (!check_options(result)) {
+            std::cerr << "use --help to see valid options" << std::endl;
+            return EXIT_FAILURE;
+        }
+
+        if (!crosswrench::config::instance()->setup(result)) {
+            return EXIT_FAILURE;
+        }
     }
     catch (cxxopts::argument_incorrect_type &e) {
         std::cout << e.what() << ", use --help to see valid options"
                   << std::endl;
         return EXIT_FAILURE;
     }
-
-    if ((argc == 2 && result.count("help")) || argc == 1) {
-        std::cout << options.help() << std::endl;
-        return EXIT_SUCCESS;
-    }
-
-    if (argc == 2 && result.count("license")) {
-        crosswrench::show_license();
-        return EXIT_SUCCESS;
-    }
-
-    if (argc == 2 && result.count("license-libs")) {
-        crosswrench::show_license_libs();
-        return EXIT_SUCCESS;
-    }
-
-    if (!check_options(result)) {
-        std::cerr << "use --help to see valid options" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    if (!crosswrench::config::instance()->setup(result)) {
+    catch (cxxopts::OptionException &e) {
+        std::cerr << e.what() << ", this shuld never happen in crosswrench"
+                  << std::endl;
         return EXIT_FAILURE;
     }
 
