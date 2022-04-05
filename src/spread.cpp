@@ -82,7 +82,8 @@ spread::install()
 }
 
 std::filesystem::path
-spread::createinstallpath(std::filesystem::path prefix, std::filesystem::path end)
+spread::createinstallpath(std::filesystem::path prefix,
+                          std::filesystem::path end)
 {
     std::filesystem::path filepath = destdir;
     filepath /= prefix;
@@ -161,7 +162,12 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
         py_files.insert(filepath);
     }
 
-    record2write.add(entry.getName(),
+    auto filepathrelroot = pystring::strip(
+      std::filesystem::relative(filepath,
+                                destdir / rootinstalldir(rootispurelib)),
+      "\"");
+
+    record2write.add(filepathrelroot,
                      "sha256",
                      base64urlsafenopad(Botan::base64_encode(hasher->final())),
                      std::to_string(std::filesystem::file_size(filepath)));
