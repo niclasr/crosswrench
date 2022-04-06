@@ -19,7 +19,10 @@ class spread
     void install();
 
   private:
+    void add2record(std::filesystem::path,
+                    std::unique_ptr<Botan::HashFunction> &);
     void compile();
+    void createdirs(std::filesystem::path);
     std::filesystem::path createinstallpath(std::filesystem::path,
                                             std::filesystem::path);
     std::filesystem::path dotdatadirinstallpath(libzippp::ZipEntry &);

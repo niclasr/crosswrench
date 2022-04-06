@@ -124,10 +124,7 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create("SHA-256");
 
-    std::filesystem::path dirpath = filepath;
-    dirpath.remove_filename();
-
-    std::filesystem::create_directories(dirpath);
+    createdirs(filepath);
 
     output_p.open(filepath, outmode);
 
@@ -163,15 +160,7 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
         py_files.insert(filepath);
     }
 
-    auto filepathrelroot = pystring::strip(
-      std::filesystem::relative(filepath,
-                                destdir / rootinstalldir(rootispurelib)),
-      "\"");
-
-    record2write.add(filepathrelroot,
-                     "sha256",
-                     base64urlsafenopad(Botan::base64_encode(hasher->final())),
-                     std::to_string(std::filesystem::file_size(filepath)));
+    add2record(filepath, hasher);
 }
 
 void
@@ -182,10 +171,7 @@ spread::installfile(const char *data,
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create("SHA-256");
 
-    std::filesystem::path dirpath = filepath;
-    dirpath.remove_filename();
-
-    std::filesystem::create_directories(dirpath);
+    createdirs(filepath);
 
     output_p.open(filepath, outmode);
 
@@ -194,15 +180,7 @@ spread::installfile(const char *data,
 
     output_p.close();
 
-    auto filepathrelroot = pystring::strip(
-      std::filesystem::relative(filepath,
-                                destdir / rootinstalldir(rootispurelib)),
-      "\"");
-
-    record2write.add(filepathrelroot,
-                     "sha256",
-                     base64urlsafenopad(Botan::base64_encode(hasher->final())),
-                     std::to_string(std::filesystem::file_size(filepath)));
+    add2record(filepath, hasher);
 }
 
 uintptr_t
@@ -242,6 +220,29 @@ spread::installinstallerfile()
 
     std::string installerstr = config::instance()->get_value("installer");
     installfile(installerstr.c_str(), installerstr.size(), installerpath);
+}
+
+void
+spread::add2record(std::filesystem::path filepath,
+                   std::unique_ptr<Botan::HashFunction> &hasher)
+{
+    auto filepathrelroot = pystring::strip(
+      std::filesystem::relative(filepath,
+                                destdir / rootinstalldir(rootispurelib)),
+      "\"");
+
+    record2write.add(filepathrelroot,
+                     "sha256",
+                     base64urlsafenopad(Botan::base64_encode(hasher->final())),
+                     std::to_string(std::filesystem::file_size(filepath)));
+}
+
+void
+spread::createdirs(std::filesystem::path filepath)
+{
+    std::filesystem::path dirpath = filepath;
+    dirpath.remove_filename();
+    std::filesystem::create_directories(dirpath);
 }
 
 } // namespace crosswrench
