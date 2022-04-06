@@ -25,6 +25,8 @@ class spread
     std::filesystem::path dotdatadirinstallpath(libzippp::ZipEntry &);
     std::filesystem::path installpath(libzippp::ZipEntry &);
     void installfile(libzippp::ZipEntry &, std::filesystem::path);
+    void installfile(const char *, size_t, std::filesystem::path);
+    void installinstallerfile();
     uintptr_t writereplacedpython(const void *,
                                   libzippp_uint64,
                                   std::unique_ptr<Botan::HashFunction> &,
