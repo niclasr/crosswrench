@@ -10,12 +10,13 @@ if (PSTREAMS_INCLUDE_DIR)
   set(CMAKE_REQUIRED_QUIET true)
   set(CMAKE_REQUIRED_INCLUDES ${PSTREAMS_INCLUDE_DIR})
   check_cxx_source_compiles("#include <pstream.h>
-                             #if PSTREAMS_VERSION < 0x0101)
+                             #if PSTREAMS_VERSION < 0x0101
                              #error
-                             #endif"
+                             #endif
+                             int main(){return 0;}"
                              PV)
   if(PV)
-  add_library(pstreams::pstreams UNKNOWN IMPORTED)
+  add_library(pstreams::pstreams INTERFACE IMPORTED)
   set_target_properties(pstreams::pstreams PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${PSTREAMS_INCLUDE_DIR}"
   )
