@@ -45,6 +45,9 @@ delete_config_instance()
 }
 } // namespace
 
+const std::string algo_python =
+  " -c \"import hashlib; print(hashlib.algorithms_guaranteed);\"";
+
 const std::string pcode_start =
   " -c \"import sysconfig; print(sysconfig.get_path('";
 const std::string pcode_end = "'));\"";
@@ -96,6 +99,10 @@ config::setup(cxxopts::ParseResult &pr)
         }
     }
 
+    if (!get_algos(pr)) {
+        return false;
+    }
+
     std::swap(db, new_db);
     return true;
 }
@@ -112,9 +119,7 @@ config::setup(std::map<std::string, std::string> &input)
 bool
 config::set_python_value(std::string var, cxxopts::ParseResult &pr)
 {
-
     std::string output;
-    std::string errors;
     std::string cmd = pr["python"].as<std::string>();
     cmd += pcode_start;
     cmd += var;
@@ -168,6 +173,22 @@ config::dotdatakeydir2config(std::string &keydir)
     }
 
     return dotdatakeydir2config_map.at(keydir);
+}
+
+bool
+config::get_algos(cxxopts::ParseResult &pr)
+{
+    std::string output;
+    std::string cmd = pr["python"].as<std::string>();
+    cmd += algo_python;
+
+    if (!get_cmd_output(cmd, output, "")) {
+        return false;
+    }
+
+    new_db["algorithms"] = pystring::strip(output);
+
+    return true;
 }
 
 } // namespace crosswrench

@@ -22,6 +22,7 @@ bool wheelhasabsolutepaths(libzippp::ZipArchive &);
 bool onlyalloweddotdatapaths(libzippp::ZipArchive &ar);
 std::filesystem::path dotdatainstalldir(std::string);
 bool isscript(libzippp::ZipEntry &);
+bool strvec_contains(std::vector<std::string> &, std::string &);
 } // namespace crosswrench
 
 #endif

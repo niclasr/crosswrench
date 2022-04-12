@@ -22,15 +22,21 @@ SOFTWARE.
 
 #include "hashlib2botan.hpp"
 
+#include "config.hpp"
+#include "functions.hpp"
+
 #include <botan/hash.h>
 #include <pystring.h>
 
+#include <algorithm>
 #include <map>
 #include <string>
+#include <vector>
 
 namespace crosswrench {
 
 hashlib2botan::hashlib2botan()
+  : algorithms_by_strength{ "sha3_512", "sha512", "sm3", "sha256" }
 {
 #if defined(BOTAN_HAS_SHA2_32)
     conv_table["sha256"] = "SHA-256";
@@ -41,10 +47,10 @@ hashlib2botan::hashlib2botan()
     conv_table["sha512_256"] = "SHA-512-256";
 #endif
 #if defined(BOTAN_HAS_SHA3)
-    conv_table["sha3_224"] = "SHA3(224)";
-    conv_table["sha3_256"] = "SHA3(256)";
-    conv_table["sha3_384"] = "SHA3(384)";
-    conv_table["sha3_512"] = "SHA3(512)";
+    conv_table["sha3_224"] = "SHA-3(224)";
+    conv_table["sha3_256"] = "SHA-3(256)";
+    conv_table["sha3_384"] = "SHA-3(384)";
+    conv_table["sha3_512"] = "SHA-3(512)";
 #endif
 #if defined(BOTAN_HAS_SM3)
     conv_table["sm3"] = "SM3";
@@ -52,6 +58,14 @@ hashlib2botan::hashlib2botan()
 #if defined(BOTAN_HAS_WHIRLPOOL)
     conv_table["whirlpool"] = "Whirlpool";
 #endif
+
+    std::vector<std::string> algo_g;
+    std::string ag_str = config::instance()->get_value("algorithms");
+    pystring::split(ag_str, algo_g, ",");
+
+    for (auto str : algo_g) {
+        algorithms_guaranteed.push_back(pystring::strip(str, "{}' "));
+    }
 }
 
 bool
@@ -70,4 +84,34 @@ hashlib2botan::hashname(std::string hashlib_algo)
 
     return conv_table[hashlib_algo];
 }
+
+std::string
+hashlib2botan::strongest_algorithm_hashlib()
+{
+    if (best_algo.empty()) {
+        for (auto str : algorithms_by_strength) {
+            if (available(str) && strvec_contains(algorithms_guaranteed, str)) {
+                best_algo = str;
+                break;
+            }
+        }
+    }
+
+    return best_algo;
+}
+
+std::string
+hashlib2botan::strongest_algorithm_botan()
+{
+    return hashname(strongest_algorithm_hashlib());
+}
+
+void
+hashlib2botan::print_guaranteed()
+{
+    for(auto str : algorithms_guaranteed) {
+        std::cout << str << std::endl;
+    }
+}
+
 } // namespace crosswrench

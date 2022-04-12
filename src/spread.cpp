@@ -122,7 +122,7 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
     bool setexec = isscript(entry);
 
     std::ofstream output_p;
-    auto hasher = Botan::HashFunction::create("SHA-256");
+    auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
 
     createdirs(filepath);
 
@@ -169,7 +169,7 @@ spread::installfile(const char *data,
                     std::filesystem::path filepath)
 {
     std::ofstream output_p;
-    auto hasher = Botan::HashFunction::create("SHA-256");
+    auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
 
     createdirs(filepath);
 
@@ -232,7 +232,7 @@ spread::add2record(std::filesystem::path filepath,
       "\"");
 
     record2write.add(filepathrelroot,
-                     "sha256",
+                     h2b.strongest_algorithm_hashlib(),
                      base64urlsafenopad(Botan::base64_encode(hasher->final())),
                      std::to_string(std::filesystem::file_size(filepath)));
 }

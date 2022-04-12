@@ -21,6 +21,7 @@ class config
     std::string dotdatakeydir2config(std::string &);
 
   private:
+    bool get_algos(cxxopts::ParseResult &);
     bool set_python_value(std::string, cxxopts::ParseResult &);
     bool verify_python_interpreter(cxxopts::ParseResult &pr);
     config();

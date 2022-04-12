@@ -242,4 +242,11 @@ isscript(libzippp::ZipEntry &entry)
     return pystring::startswith(entry.getName(), dotdatadir() + "/scripts/");
 }
 
+bool
+strvec_contains(std::vector<std::string> &v, std::string &str)
+{
+    auto result = std::find(v.begin(), v.end(), str);
+    return result != v.end();
+}
+
 } // namespace crosswrench

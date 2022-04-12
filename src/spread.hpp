@@ -1,6 +1,7 @@
 #if !defined(_SRC_SPREAD_HPP_)
 #define _SRC_SPREAD_HPP_
 
+#include "hashlib2botan.hpp"
 #include "record.hpp"
 
 #include <botan/hash.h>
@@ -41,6 +42,7 @@ class spread
     std::filesystem::path destdir;
     std::ios_base::openmode outmode;
     std::set<std::filesystem::path> py_files;
+    hashlib2botan h2b;
 };
 
 } // namespace crosswrench
