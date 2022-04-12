@@ -24,7 +24,7 @@ function(cw_library NAME)
                           "" "" "${multiValueArgs}")
 
     string(TOUPPER "${NAME}" UPPERNAME)
-    option(EXTERNAL_${UPPERNAME} "Use ${NAME} external to the project" OFF)
+    option(EXTERNAL_${UPPERNAME} "Use ${NAME} external to the project" ${EXTERNAL_LIBS})
 
     if (EXTERNAL_${UPPERNAME})
         find_package(${NAME} REQUIRED)

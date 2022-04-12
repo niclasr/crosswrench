@@ -40,6 +40,7 @@ cw_add_compile_flag(cw_all_targets INTERFACE -Wall)
 cw_add_compile_flag(cw_all_targets INTERFACE -Wextra)
 
 # libs
+option(EXTERNAL_LIBS "Use external libs by default" OFF)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(botan-2 REQUIRED IMPORTED_TARGET botan-2)
 target_link_libraries(cw_all_targets INTERFACE PkgConfig::botan-2)
