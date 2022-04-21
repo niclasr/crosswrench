@@ -23,6 +23,9 @@ bool onlyalloweddotdatapaths(libzippp::ZipArchive &ar);
 std::filesystem::path dotdatainstalldir(std::string);
 bool isscript(libzippp::ZipEntry &);
 bool strvec_contains(std::vector<std::string> &, std::string &);
+uint16_t getelf16(uint8_t, const uint8_t *);
+uint32_t getelf32(uint8_t, const uint8_t *);
+bool iselfexec(libzippp::ZipEntry &);
 } // namespace crosswrench
 
 #endif

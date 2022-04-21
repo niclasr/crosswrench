@@ -119,7 +119,7 @@ void
 spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
 {
     bool replace_python = isscript(entry);
-    bool setexec = isscript(entry);
+    bool setexec = isscript(entry) || iselfexec(entry);
 
     std::ofstream output_p;
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
