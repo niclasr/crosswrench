@@ -48,8 +48,6 @@ main(int argc, char *argv[])
               cxxopts::value<std::string>()->
               implicit_value("")->
               default_value("crosswrench"))
-            ("prefix", "destination prefix",
-              cxxopts::value<std::string>()->implicit_value(""))
             ("python", "path to python interpreter",
               cxxopts::value<std::string>()->implicit_value(""))
             ("wheel", "path to wheel file",
@@ -125,7 +123,7 @@ check_options(cxxopts::ParseResult &pr)
         }
     }
 
-    std::vector<std::string> run_opts{ "destdir", "prefix", "wheel", "python" };
+    std::vector<std::string> run_opts{ "destdir", "wheel", "python" };
     bool has_run_opts = false;
     for (auto opt : run_opts) {
         if (pr.count(opt)) {

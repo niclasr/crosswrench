@@ -80,7 +80,6 @@ config::setup(cxxopts::ParseResult &pr)
 {
     std::vector<std::string> config_opts{ "destdir",
                                           "installer",
-                                          "prefix",
                                           "python",
                                           "wheel" };
     new_db.clear();
