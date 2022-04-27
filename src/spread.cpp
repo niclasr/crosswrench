@@ -77,6 +77,7 @@ spread::install()
 
         installfile(file, installpath(file));
     }
+    installentrypointconsolescripts();
     installinstallerfile();
     compile();
     record2write.write(rootispurelib, destdir);
@@ -149,11 +150,7 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
     output_p.close();
 
     if (setexec) {
-        std::filesystem::permissions(filepath,
-                                     std::filesystem::perms::owner_exec |
-                                       std::filesystem::perms::group_exec |
-                                       std::filesystem::perms::others_exec,
-                                     std::filesystem::perm_options::add);
+        setexecperms(filepath);
     }
 
     if (pystring::endswith(entry.getName(), ".py") && !isscript(entry)) {
@@ -243,6 +240,26 @@ spread::createdirs(std::filesystem::path filepath)
     std::filesystem::path dirpath = filepath;
     dirpath.remove_filename();
     std::filesystem::create_directories(dirpath);
+}
+
+void
+spread::installentrypointconsolescripts()
+{
+    auto entrypointsfilename = dotdistinfodir() + "/entry_points.txt";
+    if (wheelfile.hasEntry(entrypointsfilename)) {
+        auto entry = wheelfile.getEntry(entrypointsfilename);
+        auto scripts = getentrypointscripts(entry);
+        if (!scripts.empty()) {
+            auto scriptsdir = destdir / dotdatainstalldir("scripts");
+            std::cout << "Installing entry point console scripts" << std::endl;
+            for (auto script : scripts) {
+                installfile(script.second.c_str(),
+                            script.second.size(),
+                            scriptsdir / script.first);
+                setexecperms(scriptsdir / script.first);
+            }
+        }
+    }
 }
 
 } // namespace crosswrench

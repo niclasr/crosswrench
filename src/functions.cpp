@@ -29,8 +29,10 @@ SOFTWARE.
 #include <pystring.h>
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <filesystem>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -308,6 +310,74 @@ iselfexec(libzippp::ZipEntry &entry)
            (ei_endian == elf_little || ei_endian == elf_big) &&
            (ei_version == 1) && (e_type == elf_exec || e_type == elf_shared) &&
            (e_version == 1);
+}
+
+std::map<std::string, std::string>
+getentrypointscripts(libzippp::ZipEntry &entry)
+{
+    std::map<std::string, std::string> scripts;
+
+    auto file = entry.readAsText();
+    std::vector<std::string> lines;
+    pystring::splitlines(file, lines);
+
+    std::for_each(lines.begin(), lines.end(), [](std::string &l) {
+        l = pystring::strip(l);
+    });
+
+    std::array<std::string, 2> sections{ "[console_scripts]", "[gui_scripts]" };
+    for (auto section : sections) {
+        auto sec_start = std::find(lines.begin(), lines.end(), section);
+        if (sec_start != lines.end()) {
+            sec_start++; // we must start on the line after sec_start since
+                         // sec_start starts with [
+            auto sec_end =
+              std::find_if(sec_start, lines.end(), [](std::string &l) {
+                  return pystring::startswith(l, "[");
+              });
+            for (auto i = sec_start; i != sec_end; i++) {
+                if (i->empty() || pystring::startswith(*i, "#") ||
+                    (pystring::find(*i, "[") != -1))
+                {
+                    continue;
+                }
+
+                std::vector<std::string> result;
+                pystring::partition(*i, "=", result);
+                scripts[pystring::strip(result.at(0))] =
+                  createscript(result.at(2));
+            }
+        }
+    }
+
+    return scripts;
+}
+
+std::string
+createscript(std::string &rhs)
+{
+    std::vector<std::string> result;
+    pystring::partition(rhs, ":", result);
+    std::string package = pystring::strip(result.at(0));
+    std::string function = pystring::strip(result.at(2));
+
+    std::string script;
+    script += "#!" + config::instance()->get_value("python") + "\n";
+    script += "import sys\n";
+    script += "from " + package + " import " + function + "\n";
+    script += "sys.exit(" + function + "())\n";
+
+    return script;
+}
+
+void
+setexecperms(std::filesystem::path filepath)
+{
+    std::filesystem::permissions(filepath,
+                                 std::filesystem::perms::owner_exec |
+                                   std::filesystem::perms::group_exec |
+                                   std::filesystem::perms::others_exec,
+                                 std::filesystem::perm_options::add);
 }
 
 } // namespace crosswrench

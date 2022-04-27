@@ -3,6 +3,7 @@
 
 #include <libzippp.h>
 
+#include <map>
 #include <filesystem>
 #include <string>
 
@@ -26,6 +27,9 @@ bool strvec_contains(std::vector<std::string> &, std::string &);
 uint16_t getelf16(uint8_t, const uint8_t *);
 uint32_t getelf32(uint8_t, const uint8_t *);
 bool iselfexec(libzippp::ZipEntry &);
+std::map<std::string, std::string> getentrypointscripts(libzippp::ZipEntry &);
+std::string createscript(std::string &);
+void setexecperms(std::filesystem::path);
 } // namespace crosswrench
 
 #endif
