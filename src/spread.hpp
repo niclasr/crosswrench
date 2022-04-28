@@ -35,7 +35,7 @@ class spread
                                   libzippp_uint64,
                                   std::unique_ptr<Botan::HashFunction> &,
                                   std::ofstream &);
-    void installentrypointsconsolescripts();
+    void installentrypointconsolescripts();
 
     libzippp::ZipArchive &wheelfile;
     record record2write;
