@@ -77,15 +77,6 @@ isbase64urlsafenopad(const std::string &str)
 }
 
 bool
-isversionnumber(const std::string &str)
-{
-    std::vector<std::string> splited;
-    pystring::split(str, splited, ".");
-
-    return std::all_of(splited.begin(), splited.end(), pystring::isdigit);
-}
-
-bool
 iswheelfilenamevalid(const std::string &filepath)
 {
     std::filesystem::path wheelpath{ filepath };
@@ -99,10 +90,6 @@ iswheelfilenamevalid(const std::string &filepath)
     pystring::split(wheelname, splited, "-");
 
     if (!(splited.size() == 6 || splited.size() == 5)) {
-        return false;
-    }
-
-    if (!isversionnumber(splited.at(1))) {
         return false;
     }
 
