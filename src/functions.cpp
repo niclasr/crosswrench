@@ -93,6 +93,11 @@ iswheelfilenamevalid(const std::string &filepath)
         return false;
     }
 
+    // the build tag must start with a number
+    if (splited.size() == 6) {
+        return pystring::isdigit(splited.at(3).substr(0,1));
+    }
+
     return true;
 }
 
