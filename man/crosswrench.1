@@ -32,6 +32,8 @@
 .Fl -python Ns = Ns path-to-python-executable
 .Fl -wheel Ns = Ns path-to-wheel
 .Op Fl -installer Ns = Ns name
+.Op Fl -script-prefix Ns = Ns prefix
+.Op Fl -script-suffix Ns = Ns suffix
 .Nm
 .Fl -license
 .Nm
@@ -56,6 +58,10 @@ path to python interpreter
 path to wheel file
 .It Fl -installer Ns = Ns name
 put name into the INSTALLER file instead of crosswrench
+.It Fl -script-prefix Ns = Ns prefix
+prefix to add to script names
+.It Fl -script-suffix Ns = Ns suffix
+suffix to add to script names
 .It Fl -licence
 show license
 .It Fl -license-libs
