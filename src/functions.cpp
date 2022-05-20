@@ -95,7 +95,7 @@ iswheelfilenamevalid(const std::string &filepath)
 
     // the build tag must start with a number
     if (splited.size() == 6) {
-        return pystring::isdigit(splited.at(3).substr(0,1));
+        return pystring::isdigit(splited.at(3).substr(0, 1));
     }
 
     return true;
@@ -336,7 +336,9 @@ getentrypointscripts(libzippp::ZipEntry &entry)
 
                 std::vector<std::string> result;
                 pystring::partition(*i, "=", result);
-                scripts[pystring::strip(result.at(0))] =
+                auto prefix = config::instance()->get_value("script-prefix");
+                auto suffix = config::instance()->get_value("script-suffix");
+                scripts[prefix + pystring::strip(result.at(0)) + suffix] =
                   createscript(result.at(2));
             }
         }

@@ -50,6 +50,14 @@ main(int argc, char *argv[])
               default_value("crosswrench"))
             ("python", "path to python interpreter",
               cxxopts::value<std::string>()->implicit_value(""))
+            ("script-prefix", "prefix for script filenames",
+              cxxopts::value<std::string>()->
+              implicit_value("")->
+              default_value(""))
+            ("script-suffix", "suffix for script filenames",
+              cxxopts::value<std::string>()->
+              implicit_value("")->
+              default_value(""))
             ("wheel", "path to wheel file",
               cxxopts::value<std::string>()->implicit_value(""))
             ("license", "show license")
@@ -124,6 +132,9 @@ check_options(cxxopts::ParseResult &pr)
     }
 
     std::vector<std::string> run_opts{ "destdir", "wheel", "python" };
+    std::vector<std::string> optional_run_opts{ "installer",
+                                                "script-prefix",
+                                                "script-suffix" };
     bool has_run_opts = false;
     for (auto opt : run_opts) {
         if (pr.count(opt)) {
@@ -151,13 +162,15 @@ check_options(cxxopts::ParseResult &pr)
         }
     }
     else {
-        if (pr.count("installer")) {
-            std::cerr << "--installer can only be used with ";
-            for (auto opt : run_opts) {
-                std::cerr << "--" << opt << " ";
+        for (auto opt : optional_run_opts) {
+            if (pr.count(opt)) {
+                std::cerr << "--" << opt << " can only be used with ";
+                for (auto ropt : run_opts) {
+                    std::cerr << "--" << ropt << " ";
+                }
+                std::cerr << std::endl;
+                areAllOptionsValid = false;
             }
-            std::cerr << std::endl;
-            areAllOptionsValid = false;
         }
     }
     std::vector<std::string> lone_options{ "help", "license", "license-libs" };

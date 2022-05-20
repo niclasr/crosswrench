@@ -119,6 +119,13 @@ spread::installpath(libzippp::ZipEntry &entry)
 void
 spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
 {
+    if (isscript(entry)) {
+        auto prefix = config::instance()->get_value("script-prefix");
+        auto suffix = config::instance()->get_value("script-suffix");
+        filepath.replace_filename(prefix + filepath.stem().string() + suffix +
+                                  filepath.extension().string());
+    }
+
     bool replace_python = isscript(entry);
     bool setexec = isscript(entry) || iselfexec(entry);
 
