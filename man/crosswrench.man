@@ -27,7 +27,7 @@
 .if n .ad l
 .SH "NAME"
 \fBcrosswrench\fR
-\- install python wheel
+\- python wheel installer
 .SH "SYNOPSIS"
 .HP 12n
 \fBcrosswrench\fR
@@ -51,7 +51,7 @@
 \fBcrosswrench\fR
 \fB\--help\fR
 .PD
-.SH "Description"
+.SH "DESCRIPTION"
 \fBcrosswrench\fR
 installs the python wheel specified by --wheel into the directories supplied by the python
 executable specified by --python prepended by the argument given to --destdir .
@@ -88,3 +88,20 @@ show licenses of libraries used by crosswrench
 \fB\--help\fR
 .br
 show help
+.SH "STANDARDS"
+\fBcrosswrench\fR
+is trying to be compliant with the python packaging standards at
+\fBhttps://packaging.python.org/en/latest/specifications/\fR
+.PP
+Specifically:
+.PP
+\fIBinary distribution format\fR,
+https://packaging.python.org/en/latest/specifications/binary-distribution-format/.
+.PP
+\fIRecord installed projects, excluding direct URL\fR,
+https://packaging.python.org/en/latest/specifications/recording-installed-projects/.
+.PP
+\fIEntry points specification\fR,
+https://packaging.python.org/en/latest/specifications/enty-points/.
+.SH "AUTHORS"
+Niclas Rosenvik <\fIyouremailsarecrap@gmail.com\fR>
