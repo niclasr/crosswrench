@@ -68,4 +68,5 @@ include(GNUInstallDirs)
 
 install(TARGETS crosswrench)
 install(FILES LICENSE LICENSE.libs TYPE DOC)
-install(FILES man/crosswrench.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/)
+install(FILES man/crosswrench.man DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/ RENAME crosswrench.1)
+install(FILES man/crosswrench.1.html TYPE DOC)

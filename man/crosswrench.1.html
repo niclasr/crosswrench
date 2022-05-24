@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<!-- This is an automatically generated file.  Do not edit.
+  MIT License
+  
+  Copyright (c) 2022 Niclas Rosenvik
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+  
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+  
+   Not finished yet, more must be written.
+ -->
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    table.head, table.foot { width: 100%; }
+    td.head-rtitle, td.foot-os { text-align: right; }
+    td.head-vol { text-align: center; }
+    .Nd, .Bf, .Op { display: inline; }
+    .Pa, .Ad { font-style: italic; }
+    .Ms { font-weight: bold; }
+    .Bl-diag > dt { font-weight: bold; }
+    code.Nm, .Fl, .Cm, .Ic, code.In, .Fd, .Fn, .Cd { font-weight: bold;
+      font-family: inherit; }
+  </style>
+  <title>crosswrench(1)</title>
+</head>
+<body>
+<table class="head">
+  <tr>
+    <td class="head-ltitle">crosswrench(1)</td>
+    <td class="head-vol">General Commands Manual</td>
+    <td class="head-rtitle">crosswrench(1)</td>
+  </tr>
+</table>
+<div class="manual-text">
+<section class="Sh">
+<h1 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h1>
+<p class="Pp"><code class="Nm">crosswrench</code> &#x2014;
+    <span class="Nd">install python wheel</span></p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SYNOPSIS"><a class="permalink" href="#SYNOPSIS">SYNOPSIS</a></h1>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">crosswrench</code></td>
+    <td><code class="Fl">--destdir</code>=directory
+      <code class="Fl">--python</code>=path-to-python-executable
+      <code class="Fl">--wheel</code>=path-to-wheel
+      [<code class="Fl">--installer</code>=name]
+      [<code class="Fl">--script-prefix</code>=prefix]
+      [<code class="Fl">--script-suffix</code>=suffix]</td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">crosswrench</code></td>
+    <td><code class="Fl">--license</code></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">crosswrench</code></td>
+    <td><code class="Fl">--license-libs</code></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">crosswrench</code></td>
+    <td><code class="Fl">--help</code></td>
+  </tr>
+</table>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="Description"><a class="permalink" href="#Description">Description</a></h1>
+<p class="Pp"><code class="Nm">crosswrench</code> installs the python wheel
+    specified by --wheel into the directories supplied by the python executable
+    specified by --python prepended by the argument given to --destdir .</p>
+<p class="Pp"><code class="Nm">crosswrench</code> is trying to support version
+    1.0 of the wheel specification.</p>
+<p class="Pp">Options:</p>
+<dl class="Bl-tag">
+  <dt id="destdir"><a class="permalink" href="#destdir"><code class="Fl">--destdir</code></a>=directory</dt>
+  <dd>specify root directory to install into</dd>
+  <dt id="python"><a class="permalink" href="#python"><code class="Fl">--python</code></a>=path</dt>
+  <dd>path to python interpreter</dd>
+  <dt id="wheel"><a class="permalink" href="#wheel"><code class="Fl">--wheel</code></a>=path</dt>
+  <dd>path to wheel file</dd>
+  <dt id="installer"><a class="permalink" href="#installer"><code class="Fl">--installer</code></a>=name</dt>
+  <dd>put name into the INSTALLER file instead of crosswrench</dd>
+  <dt id="script-prefix"><a class="permalink" href="#script-prefix"><code class="Fl">--script-prefix</code></a>=prefix</dt>
+  <dd>prefix to add to script names</dd>
+  <dt id="script-suffix"><a class="permalink" href="#script-suffix"><code class="Fl">--script-suffix</code></a>=suffix</dt>
+  <dd>suffix to add to script names</dd>
+  <dt id="licence"><a class="permalink" href="#licence"><code class="Fl">--licence</code></a></dt>
+  <dd>show license</dd>
+  <dt id="license-libs"><a class="permalink" href="#license-libs"><code class="Fl">--license-libs</code></a></dt>
+  <dd>show licenses of libraries used by crosswrench</dd>
+  <dt id="help"><a class="permalink" href="#help"><code class="Fl">--help</code></a></dt>
+  <dd>show help</dd>
+</dl>
+</section>
+</div>
+<table class="foot">
+  <tr>
+    <td class="foot-date">April 28, 2022</td>
+    <td class="foot-os"></td>
+  </tr>
+</table>
+</body>
+</html>

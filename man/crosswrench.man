@@ -1,0 +1,90 @@
+.\" Automatically generated from an mdoc input file.  Do not edit.
+.\"MIT License
+.\"
+.\"Copyright (c) 2022 Niclas Rosenvik
+.\"
+.\"Permission is hereby granted, free of charge, to any person obtaining a copy
+.\"of this software and associated documentation files (the "Software"), to deal
+.\"in the Software without restriction, including without limitation the rights
+.\"to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+.\"copies of the Software, and to permit persons to whom the Software is
+.\"furnished to do so, subject to the following conditions:
+.\"
+.\"The above copyright notice and this permission notice shall be included in all
+.\"copies or substantial portions of the Software.
+.\"
+.\"THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\"IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\"FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+.\"AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\"LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+.\"OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+.\"SOFTWARE.
+.\"
+.\" Not finished yet, more must be written.
+.TH "crosswrench" "1" "April 28, 2022" "" "General Commands Manual"
+.nh
+.if n .ad l
+.SH "NAME"
+\fBcrosswrench\fR
+\- install python wheel
+.SH "SYNOPSIS"
+.HP 12n
+\fBcrosswrench\fR
+\fB\--destdir\fR=directory
+\fB\--python\fR=path-to-python-executable
+\fB\--wheel\fR=path-to-wheel
+[\fB\--installer\fR=name]
+[\fB\--script-prefix\fR=prefix]
+[\fB\--script-suffix\fR=suffix]
+.br
+.PD 0
+.HP 12n
+\fBcrosswrench\fR
+\fB\--license\fR
+.br
+.HP 12n
+\fBcrosswrench\fR
+\fB\--license-libs\fR
+.br
+.HP 12n
+\fBcrosswrench\fR
+\fB\--help\fR
+.PD
+.SH "Description"
+\fBcrosswrench\fR
+installs the python wheel specified by --wheel into the directories supplied by the python
+executable specified by --python prepended by the argument given to --destdir .
+.PP
+\fBcrosswrench\fR
+is trying to support version 1.0 of the wheel specification.
+.PP
+Options:
+.TP 8n
+\fB\--destdir\fR=directory
+specify root directory to install into
+.TP 8n
+\fB\--python\fR=path
+path to python interpreter
+.TP 8n
+\fB\--wheel\fR=path
+path to wheel file
+.TP 8n
+\fB\--installer\fR=name
+put name into the INSTALLER file instead of crosswrench
+.TP 8n
+\fB\--script-prefix\fR=prefix
+prefix to add to script names
+.TP 8n
+\fB\--script-suffix\fR=suffix
+suffix to add to script names
+.TP 8n
+\fB\--licence\fR
+show license
+.TP 8n
+\fB\--license-libs\fR
+show licenses of libraries used by crosswrench
+.TP 8n
+\fB\--help\fR
+.br
+show help
