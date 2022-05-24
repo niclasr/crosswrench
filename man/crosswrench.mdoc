@@ -25,7 +25,7 @@
 .Dt crosswrench 1
 .Sh NAME
 .Nm crosswrench
-.Nd install python wheel
+.Nd python wheel installer
 .Sh SYNOPSIS
 .Nm
 .Fl -destdir Ns = Ns directory
@@ -40,7 +40,7 @@
 .Fl -license-libs
 .Nm
 .Fl -help
-.Sh Description
+.Sh DESCRIPTION
 .Nm
 installs the python wheel specified by --wheel into the directories supplied by the python
 executable specified by --python prepended by the argument given to --destdir .
@@ -68,3 +68,26 @@ show license
 show licenses of libraries used by crosswrench
 .It Fl -help
 show help
+.Sh STANDARDS
+.Nm
+is trying to be compliant with the python packaging standards at
+.Lk https://packaging.python.org/en/latest/specifications/
+.Pp
+Specifically:
+.Pp
+.Rs
+.%B Binary distribution format
+.%U https://packaging.python.org/en/latest/specifications/binary-distribution-format/
+.Re
+.Pp
+.Rs
+.%B Record installed projects, excluding direct URL
+.%U https://packaging.python.org/en/latest/specifications/recording-installed-projects/
+.Re
+.Pp
+.Rs
+.%B Entry points specification
+.%U https://packaging.python.org/en/latest/specifications/enty-points/
+.Re
+.Sh AUTHORS
+.An Niclas Rosenvik Aq Mt youremailsarecrap@gmail.com
