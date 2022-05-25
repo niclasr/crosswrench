@@ -32,8 +32,12 @@ add_executable(crosswrench
 target_include_directories(crosswrench PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(crosswrench cw_all_targets cw_shared_src)
 
-cw_string_literal(cwLicense ${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/license.inc)
-cw_string_literal(cwLicenseLibs ${CMAKE_SOURCE_DIR}/LICENSE.libs ${CMAKE_BINARY_DIR}/license-libs.inc)
+cw_string_literal(cwLicense
+                  ${CMAKE_SOURCE_DIR}/LICENSE
+                  ${CMAKE_BINARY_DIR}/license.inc)
+cw_string_literal(cwLicenseLibs
+                  ${CMAKE_SOURCE_DIR}/LICENSE.libs
+                  ${CMAKE_BINARY_DIR}/license-libs.inc)
 
 # add warnings
 cw_add_compile_flag(cw_all_targets INTERFACE -Wall)
@@ -68,5 +72,7 @@ include(GNUInstallDirs)
 
 install(TARGETS crosswrench)
 install(FILES LICENSE LICENSE.libs TYPE DOC)
-install(FILES man/crosswrench.man DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/ RENAME crosswrench.1)
+install(FILES man/crosswrench.man
+        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/
+        RENAME crosswrench.1)
 install(FILES man/crosswrench.1.html TYPE DOC)
