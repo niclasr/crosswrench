@@ -374,4 +374,22 @@ setexecperms(std::filesystem::path filepath)
                                  std::filesystem::perm_options::add);
 }
 
+bool
+wheelhasdotdotpath(libzippp::ZipArchive &ar)
+{
+    std::string dotdot{ ".." };
+    auto entries = ar.getEntries();
+    for (auto entry : entries) {
+        auto name = entry.getName();
+        std::vector<std::string> namesplited;
+        pystring::split(name, namesplited, "/");
+
+        if (strvec_contains(namesplited, dotdot)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 } // namespace crosswrench

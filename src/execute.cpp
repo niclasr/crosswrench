@@ -67,6 +67,13 @@ execute()
         return EXIT_FAILURE;
     }
 
+    if (wheelhasdotdotpath(wheelfile)) {
+        std::cerr << config::instance()->get_value("wheel")
+                  << " has .. in its paths and crosswrench does not support "
+                  << "this for security reasons" << std::endl;
+        return EXIT_FAILURE;
+    }
+
     if (!onlyalloweddotdatapaths(wheelfile)) {
         std::cerr << config::instance()->get_value("wheel")
                   << " is an invalid wheelfile since it contains paths in "

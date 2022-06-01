@@ -29,6 +29,7 @@ bool iselfexec(libzippp::ZipEntry &);
 std::map<std::string, std::string> getentrypointscripts(libzippp::ZipEntry &);
 std::string createscript(std::string &);
 void setexecperms(std::filesystem::path);
+bool wheelhasdotdotpath(libzippp::ZipArchive &);
 } // namespace crosswrench
 
 #endif
