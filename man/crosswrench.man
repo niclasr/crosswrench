@@ -33,6 +33,8 @@
 \fB\--destdir\fR=directory
 \fB\--python\fR=path-to-python-executable
 \fB\--wheel\fR=path-to-wheel
+[\fB\--direct-url\fR=url]
+[\fB\--direct-url-archive\fR=file]
 [\fB\--installer\fR=name]
 [\fB\--script-prefix\fR=prefix]
 [\fB\--script-suffix\fR=suffix]
@@ -68,6 +70,12 @@ path to python interpreter
 .TP 8n
 \fB\--wheel\fR=path
 path to wheel file
+.TP 8n
+\fB\--direct-url\fR=url
+url to put in direct_url.json
+.TP 8n
+\fB\--direct-url-archive\fR=file
+file to base the hash in direct_url.json on
 .TP 8n
 \fB\--installer\fR=name
 put name into the INSTALLER file instead of crosswrench
