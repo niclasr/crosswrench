@@ -30,6 +30,8 @@
 .Fl -destdir Ns = Ns directory
 .Fl -python Ns = Ns path-to-python-executable
 .Fl -wheel Ns = Ns path-to-wheel
+.Op Fl -direct-url Ns = Ns url
+.Op Fl -direct-url-archive Ns = Ns file
 .Op Fl -installer Ns = Ns name
 .Op Fl -script-prefix Ns = Ns prefix
 .Op Fl -script-suffix Ns = Ns suffix
@@ -55,6 +57,10 @@ specify root directory to install into
 path to python interpreter
 .It Fl -wheel Ns = Ns path
 path to wheel file
+.It Fl -direct-url Ns = Ns url
+url to put in direct_url.json
+.It Fl -direct-url-archive Ns = Ns file
+file to base the hash in direct_url.json on
 .It Fl -installer Ns = Ns name
 put name into the INSTALLER file instead of crosswrench
 .It Fl -script-prefix Ns = Ns prefix

@@ -36,6 +36,7 @@ class spread
                                   std::unique_ptr<Botan::HashFunction> &,
                                   std::ofstream &);
     void installentrypointconsolescripts();
+    void installdirecturl();
 
     libzippp::ZipArchive &wheelfile;
     record record2write;

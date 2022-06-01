@@ -44,6 +44,10 @@ main(int argc, char *argv[])
         options.add_options()
             ("destdir", "destination root",
               cxxopts::value<std::string>()->implicit_value(""))
+            ("direct-url", "url part of direct url",
+              cxxopts::value<std::string>()->implicit_value(""))
+            ("direct-url-archive", "file to base the direct url hash on",
+              cxxopts::value<std::string>()->implicit_value(""))
             ("installer", "installer name",
               cxxopts::value<std::string>()->
               implicit_value("")->
@@ -132,9 +136,14 @@ check_options(cxxopts::ParseResult &pr)
     }
 
     std::vector<std::string> run_opts{ "destdir", "wheel", "python" };
-    std::vector<std::string> optional_run_opts{ "installer",
+    std::vector<std::string> optional_run_opts{ "direct-url",
+                                                "direct-url-archive",
+                                                "installer",
                                                 "script-prefix",
                                                 "script-suffix" };
+    std::vector<std::string> direct_url_opts{ "direct-url",
+                                              "direct-url-archive" };
+
     bool has_run_opts = false;
     for (auto opt : run_opts) {
         if (pr.count(opt)) {
@@ -146,6 +155,26 @@ check_options(cxxopts::ParseResult &pr)
             has_run_opts = true;
         }
     }
+
+    bool all_directurl_opts_unset = true;
+    bool all_directurl_opts_set = true;
+    for (auto opt : direct_url_opts) {
+        if (pr.count(opt)) {
+            all_directurl_opts_unset = false;
+        }
+        else {
+            all_directurl_opts_set = false;
+        }
+    }
+    if (!(all_directurl_opts_set ^ all_directurl_opts_unset)) {
+        std::cerr << "the options ";
+        for (auto opt : direct_url_opts) {
+            std::cerr << "--" << opt << " ";
+        }
+        std::cerr << "can only be used together" << std::endl;
+        areAllOptionsValid = false;
+    }
+
     if (has_run_opts) {
         for (auto opt : run_opts) {
             if (pr.count(opt) == 0) {

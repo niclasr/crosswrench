@@ -78,12 +78,11 @@ config::instance()
 bool
 config::setup(cxxopts::ParseResult &pr)
 {
-    std::vector<std::string> config_opts{ "destdir",
-                                          "installer",
-                                          "python",
-                                          "script-prefix",
-                                          "script-suffix",
-                                          "wheel" };
+    std::vector<std::string> config_opts{ "destdir",       "installer",
+                                          "python",        "script-prefix",
+                                          "script-suffix", "wheel" };
+    std::vector<std::string> directurl_opts{ "direct-url",
+                                             "direct-url-archive" };
     new_db.clear();
 
     if (!verify_python_interpreter(pr)) {
@@ -92,6 +91,15 @@ config::setup(cxxopts::ParseResult &pr)
 
     for (auto opt : config_opts) {
         new_db[opt] = pr[opt].as<std::string>();
+    }
+
+    for (auto opt : directurl_opts) {
+        if (pr.count(opt)) {
+            new_db[opt] = pr[opt].as<std::string>();
+        }
+        else {
+            new_db[opt] = "";
+        }
     }
 
     for (auto path : python_paths) {

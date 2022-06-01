@@ -79,6 +79,9 @@ spread::install()
     }
     installentrypointconsolescripts();
     installinstallerfile();
+    if (!config::instance()->get_value("direct-url").empty()) {
+        installdirecturl();
+    }
     compile();
     record2write.write(rootispurelib, destdir);
 }
@@ -267,6 +270,46 @@ spread::installentrypointconsolescripts()
             }
         }
     }
+}
+
+void
+spread::installdirecturl()
+{
+    std::cout << "Installing direct_url.json" << std::endl;
+    std::ifstream input_p;
+    std::ios_base::openmode inmode{ std::ios_base::binary |
+                                    std::ios_base::out };
+
+    auto directurlpath = destdir / rootinstalldir(rootispurelib) /
+                         dotdistinfodir() / "direct_url.json";
+    std::string url = config::instance()->get_value("direct-url");
+    std::filesystem::path archive{ config::instance()->get_value(
+      "direct-url-archive") };
+    std::vector<uint8_t> buf(2048);
+    auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
+
+    input_p.open(archive, inmode);
+
+    while (input_p.good()) {
+        input_p.read(reinterpret_cast<char *>(buf.data()), buf.size());
+        hasher->update(buf.data(), input_p.gcount());
+    }
+
+    input_p.close();
+
+    std::string hash =
+      base64urlsafenopad(Botan::base64_encode(hasher->final()));
+    std::string hash_type = h2b.strongest_algorithm_hashlib();
+
+    std::string directurldata;
+    directurldata += "{\n";
+    directurldata += "    \"url\": \"" + url + "\",\n";
+    directurldata += "    archive_info\": {\n";
+    directurldata += "        \"hash\": \"" + hash_type + "=" + hash + "\"\n";
+    directurldata += "    }\n";
+    directurldata += "}";
+
+    installfile(directurldata.data(), directurldata.size(), directurlpath);
 }
 
 } // namespace crosswrench
