@@ -38,6 +38,7 @@
 [\fB\--installer\fR=name]
 [\fB\--script-prefix\fR=prefix]
 [\fB\--script-suffix\fR=suffix]
+[\fB\--verbose\fR]
 .br
 .PD 0
 .HP 12n
@@ -85,6 +86,9 @@ prefix to add to script names
 .TP 8n
 \fB\--script-suffix\fR=suffix
 suffix to add to script names
+.TP 8n
+\fB\--verbose\fR
+print files that are installed
 .TP 8n
 \fB\--licence\fR
 show license
