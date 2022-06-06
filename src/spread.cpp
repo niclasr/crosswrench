@@ -35,6 +35,7 @@ SOFTWARE.
 #include <filesystem>
 #include <fstream>
 #include <ios>
+#include <iostream>
 #include <string>
 
 namespace crosswrench {
@@ -44,6 +45,7 @@ spread::spread(libzippp::ZipArchive &ar, bool _rootispurelib)
   , rootispurelib{ _rootispurelib }
   , destdir{ config::instance()->get_value("destdir") }
   , outmode{ std::ios_base::binary | std::ios_base::out }
+  , verbose{ config::instance()->get_value("verbose") == "true" }
 {}
 
 void
@@ -63,11 +65,15 @@ spread::compile()
     if (!get_cmd_output(cmd, output, files)) {
         throw std::string{ "Failed to compile .py files" };
     }
+    if (verbose) {
+        std::cout << files;
+    }
 }
 
 void
 spread::install()
 {
+    std::cout << "Installing files" << std::endl;
     auto files = wheelfile.getEntries();
     for (auto file : files) {
         // files that should not be installed
@@ -153,8 +159,7 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
     };
 
     // debugging
-    std::cout << entry.getName() << " -> " << pystring::strip(filepath, "\"")
-              << std::endl;
+    printverboseinstallloc(entry.getName(), filepath);
 
     wheelfile.readEntry(entry, writer);
     output_p.close();
@@ -225,8 +230,10 @@ spread::installinstallerfile()
     auto installerpath =
       destdir / rootinstalldir(rootispurelib) / dotdistinfodir() / "INSTALLER";
 
+    std::cout << "Installing INSTALLER file" << std::endl;
     std::string installerstr = config::instance()->get_value("installer");
     installfile(installerstr.c_str(), installerstr.size(), installerpath);
+    printverboseinstallloc("INSTALLER", installerpath);
 }
 
 void
@@ -267,6 +274,7 @@ spread::installentrypointconsolescripts()
                             script.second.size(),
                             scriptsdir / script.first);
                 setexecperms(scriptsdir / script.first);
+                printverboseinstallloc(script.first, scriptsdir / script.first);
             }
         }
     }
@@ -310,6 +318,15 @@ spread::installdirecturl()
     directurldata += "}";
 
     installfile(directurldata.data(), directurldata.size(), directurlpath);
+    printverboseinstallloc("direct_url.json", directurlpath);
+}
+
+void
+spread::printverboseinstallloc(std::string name, std::string loc)
+{
+    if (verbose) {
+        std::cout << name << " -> " << loc << std::endl;
+    }
 }
 
 } // namespace crosswrench

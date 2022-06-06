@@ -37,6 +37,7 @@ class spread
                                   std::ofstream &);
     void installentrypointconsolescripts();
     void installdirecturl();
+    void printverboseinstallloc(std::string, std::string);
 
     libzippp::ZipArchive &wheelfile;
     record record2write;
@@ -45,6 +46,7 @@ class spread
     std::ios_base::openmode outmode;
     std::set<std::filesystem::path> py_files;
     hashlib2botan h2b;
+    bool verbose;
 };
 
 } // namespace crosswrench

@@ -93,6 +93,13 @@ config::setup(cxxopts::ParseResult &pr)
         new_db[opt] = pr[opt].as<std::string>();
     }
 
+    if (pr["verbose"].as<bool>()) {
+        new_db["verbose"] = "true";
+    }
+    else {
+        new_db["verbose"] = "false";
+    }
+
     for (auto opt : directurl_opts) {
         if (pr.count(opt)) {
             new_db[opt] = pr[opt].as<std::string>();

@@ -62,6 +62,8 @@ main(int argc, char *argv[])
               cxxopts::value<std::string>()->
               implicit_value("")->
               default_value(""))
+            ("verbose", "print files that are installed",
+              cxxopts::value<bool>()->default_value("false"))
             ("wheel", "path to wheel file",
               cxxopts::value<std::string>()->implicit_value(""))
             ("license", "show license")
@@ -140,7 +142,8 @@ check_options(cxxopts::ParseResult &pr)
                                                 "direct-url-archive",
                                                 "installer",
                                                 "script-prefix",
-                                                "script-suffix" };
+                                                "script-suffix"
+                                                "verbose" };
     std::vector<std::string> direct_url_opts{ "direct-url",
                                               "direct-url-archive" };
 

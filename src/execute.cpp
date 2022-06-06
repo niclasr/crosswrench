@@ -113,7 +113,6 @@ execute()
         std::cout << config::instance()->get_value("wheel")
                   << " is a valid wheel file as verified against RECORD"
                   << std::endl;
-        std::cout << "installing!" << std::endl;
 
         spread installer{ wheelfile, wheel_obj.root_is_purelib() };
         installer.install();
