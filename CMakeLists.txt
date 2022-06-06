@@ -76,3 +76,13 @@ install(FILES man/crosswrench.man
         DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/
         RENAME crosswrench.1)
 install(FILES man/crosswrench.1.html TYPE DOC)
+
+# release
+set(CPACK_SOURCE_GENERATOR "TGZ")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME
+    ${PROJECT_NAME}-${PROJECT_VERSION})
+set(CPACK_SOURCE_IGNORE_FILES
+    \\.git/
+    .gitignore)
+set(CPACK_VERBATIM_VARIABLES ON)
+include(CPack)
