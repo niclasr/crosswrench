@@ -83,6 +83,7 @@ config::setup(cxxopts::ParseResult &pr)
                                           "script-suffix", "wheel" };
     std::vector<std::string> directurl_opts{ "direct-url",
                                              "direct-url-archive" };
+    std::vector<std::string> path_opts{ "destdir", "python", "wheel" };
     new_db.clear();
 
     if (!verify_python_interpreter(pr)) {
@@ -90,7 +91,12 @@ config::setup(cxxopts::ParseResult &pr)
     }
 
     for (auto opt : config_opts) {
-        new_db[opt] = pr[opt].as<std::string>();
+        if (strvec_contains(path_opts, opt)) {
+            new_db[opt] = expandhome(pr[opt].as<std::string>());
+        }
+        else {
+            new_db[opt] = pr[opt].as<std::string>();
+        }
     }
 
     if (pr["verbose"].as<bool>()) {

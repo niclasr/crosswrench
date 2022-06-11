@@ -31,6 +31,7 @@ SOFTWARE.
 #include <algorithm>
 #include <array>
 #include <cctype>
+#include <cstdlib>
 #include <filesystem>
 #include <map>
 #include <string>
@@ -390,6 +391,17 @@ wheelhasdotdotpath(libzippp::ZipArchive &ar)
     }
 
     return false;
+}
+
+std::string
+expandhome(std::string path)
+{
+    if (pystring::startswith(path, "~/") && std::getenv("HOME") != NULL) {
+        std::string home{ std::getenv("HOME") };
+        path = home + path.substr(1);
+    }
+
+    return path;
 }
 
 } // namespace crosswrench
