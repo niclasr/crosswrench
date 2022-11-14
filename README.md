@@ -1,21 +1,21 @@
-# crosswrench
+# Crosswrench
 A python wheel 1.0 (pep 427) installer designed for third party package managers, but can be used by others as well.
 ## TOC
 - [background](#background)
 - [usage](#usage)
 - [build and install](#build-and-install)
-## background
+## Background
 Some users don't want to install [pip](https://pip.pypa.io/) in their systems, but still wants to be able to install
 wheels.
-## usage
-## build and install
+## Usage
+## Build and install
 Building is done using CMake.
 ```
 cmake
 make
 make install
 ```
-out-of-source build is recommended
+out-of-source builds are recommended
 ```
 mkdir <build-dir>
 cd <build-dir>
@@ -23,8 +23,8 @@ cmake <source-dir>
 make
 make install
 ```
-### required dependencies
-- a working c++17 compiler environment
+### Required dependencies
+- working c++17 compiler environment
 - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) or [pkgconf](http://pkgconf.org/)
 - [botan2](https://botan.randombit.net/)
 - [cmake](https://cmake.org/)
