@@ -25,11 +25,12 @@ make install
 ```
 ### required dependencies
 - a working c++17 compiler environment
+- [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) or [pkgconf](http://pkgconf.org/)
 - [botan2](https://botan.randombit.net/)
 - [cmake](https://cmake.org/)
 - [libzip](https://libzip.org/)
 
-These three are always required, **crosswrench** bundles some dependencies that can used externally if choosen.
+These are always required, **crosswrench** bundles some dependencies that can used externally if choosen.
 These are:
 - [csv2](https://github.com/p-ranav/csv2)
 - [cxxopts](https://github.com/jarro2783/cxxopts)
