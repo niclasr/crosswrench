@@ -1,6 +1,7 @@
 #if !defined(_SRC_FUNCTIONS_HPP_)
 #define _SRC_FUNCTIONS_HPP_
 
+#include <cxxopts.hpp>
 #include <libzippp.h>
 
 #include <map>
@@ -31,6 +32,9 @@ std::string createscript(std::string &);
 void setexecperms(std::filesystem::path);
 bool wheelhasdotdotpath(libzippp::ZipArchive &);
 std::string expandhome(std::string);
+int countoptorenv(cxxopts::ParseResult &, std::string);
+std::string getoptorenv(cxxopts::ParseResult &, std::string);
+std::string getenvmsg(std::string &);
 } // namespace crosswrench
 
 #endif

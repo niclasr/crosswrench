@@ -92,10 +92,10 @@ config::setup(cxxopts::ParseResult &pr)
 
     for (auto opt : config_opts) {
         if (strvec_contains(path_opts, opt)) {
-            new_db[opt] = expandhome(pr[opt].as<std::string>());
+            new_db[opt] = expandhome(getoptorenv(pr, opt));
         }
         else {
-            new_db[opt] = pr[opt].as<std::string>();
+            new_db[opt] = getoptorenv(pr, opt);
         }
     }
 
@@ -142,7 +142,7 @@ bool
 config::set_python_value(std::string var, cxxopts::ParseResult &pr)
 {
     std::string output;
-    std::string cmd = pr["python"].as<std::string>();
+    std::string cmd = getoptorenv(pr, "python");
     cmd += pcode_start;
     cmd += var;
     cmd += pcode_end;
@@ -174,14 +174,14 @@ bool
 config::verify_python_interpreter(cxxopts::ParseResult &pr)
 {
     std::string output;
-    std::string cmd = pr["python"].as<std::string>();
+    std::string cmd = getoptorenv(pr, "python");
     cmd += " --version";
     if (get_cmd_output(cmd, output, "")) {
         if (pystring::startswith(pystring::lower(output), "python ")) {
             return true;
         }
     }
-    std::cerr << pr["python"].as<std::string>()
+    std::cerr << getoptorenv(pr, "python")
               << " is not a valid python interpreter" << std::endl;
 
     return false;
@@ -201,7 +201,7 @@ bool
 config::get_algos(cxxopts::ParseResult &pr)
 {
     std::string output;
-    std::string cmd = pr["python"].as<std::string>();
+    std::string cmd = getoptorenv(pr, "python");
     cmd += algo_python;
 
     if (!get_cmd_output(cmd, output, "")) {

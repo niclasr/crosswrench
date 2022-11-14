@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include "config.hpp"
 
+#include <cxxopts.hpp>
 #include <libzippp.h>
 #include <pstream.h>
 #include <pystring.h>
@@ -52,6 +53,9 @@ distdashversion()
 
     return pystring::join("-", result);
 }
+
+std::map<std::string, std::string> opt2env{ { "destdir", "DESTDIR" },
+                                            { "python", "PYTHONBIN" } };
 
 } // namespace
 
@@ -402,6 +406,54 @@ expandhome(std::string path)
     }
 
     return path;
+}
+
+int
+countoptorenv(cxxopts::ParseResult &pr, std::string opt)
+{
+    if (pr.count(opt)) {
+        return pr.count(opt);
+    }
+
+    auto v = opt2env.find(opt);
+    if (v != opt2env.end()) {
+        if (std::getenv(v->second.c_str()) != NULL) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+std::string
+getoptorenv(cxxopts::ParseResult &pr, std::string opt)
+{
+    if (pr.count(opt)) {
+        return pr[opt].as<std::string>();
+    }
+
+    auto v = opt2env.find(opt);
+    if (v != opt2env.end()) {
+        if (std::getenv(v->second.c_str()) != NULL) {
+            return std::string(std::getenv(v->second.c_str()));
+        }
+    }
+
+    return "";
+}
+
+std::string
+getenvmsg(std::string &opt)
+{
+    auto v = opt2env.find(opt);
+    if (v != opt2env.end()) {
+        std::string msg;
+        msg += " or environment variable ";
+        msg += v->second;
+        return msg;
+    }
+
+    return "";
 }
 
 } // namespace crosswrench

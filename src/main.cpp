@@ -22,6 +22,7 @@ SOFTWARE.
 
 #include "config.hpp"
 #include "execute.hpp"
+#include "functions.hpp"
 #include "license.hpp"
 
 #include <cxxopts.hpp>
@@ -149,10 +150,12 @@ check_options(cxxopts::ParseResult &pr)
 
     bool has_run_opts = false;
     for (auto opt : run_opts) {
-        if (pr.count(opt)) {
-            if (pr.count(opt) == 1 && pr[opt].as<std::string>() == "") {
-                std::cerr << "--" << opt << " must be given an value"
-                          << std::endl;
+        if (crosswrench::countoptorenv(pr, opt)) {
+            if (crosswrench::countoptorenv(pr, opt) == 1 &&
+                crosswrench::getoptorenv(pr, opt) == "")
+            {
+                std::cerr << "--" << opt << crosswrench::getenvmsg(opt)
+                          << " must be given an value" << std::endl;
                 areAllOptionsValid = false;
             }
             has_run_opts = true;
@@ -180,8 +183,9 @@ check_options(cxxopts::ParseResult &pr)
 
     if (has_run_opts) {
         for (auto opt : run_opts) {
-            if (pr.count(opt) == 0) {
-                std::cerr << "--" << opt << " must be provided" << std::endl;
+            if (crosswrench::countoptorenv(pr, opt) == 0) {
+                std::cerr << "--" << opt << crosswrench::getenvmsg(opt)
+                          << " must be provided" << std::endl;
                 areAllOptionsValid = false;
             }
         }
@@ -198,7 +202,8 @@ check_options(cxxopts::ParseResult &pr)
             if (pr.count(opt)) {
                 std::cerr << "--" << opt << " can only be used with ";
                 for (auto ropt : run_opts) {
-                    std::cerr << "--" << ropt << " ";
+                    std::cerr << "--" << ropt << crosswrench::getenvmsg(opt)
+                              << " ";
                 }
                 std::cerr << std::endl;
                 areAllOptionsValid = false;
