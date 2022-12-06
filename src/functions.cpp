@@ -439,6 +439,10 @@ getoptorenv(cxxopts::ParseResult &pr, std::string opt)
         }
     }
 
+    if (pr[opt].has_default()) {
+        return pr[opt].as<std::string>();
+    }
+
     return "";
 }
 
