@@ -48,13 +48,16 @@ delete_config_instance()
 const std::string algo_python =
   " -c \"import hashlib; print(hashlib.algorithms_guaranteed);\"";
 
+const std::string framework_python =
+  " -c \"import sys; print(sys._framework);\"";
+
 const std::string pcode_start =
   " -c \"import sysconfig; print(sysconfig.get_path('";
+const std::string pcode_middle = "','";
 const std::string pcode_end = "'));\"";
-const std::array<std::string, 8> python_paths{ "data",        "include",
-                                               "platinclude", "platlib",
-                                               "platstdlib",  "purelib",
-                                               "scripts",     "stdlib" };
+const std::array<std::string, 7> python_paths{
+    "data", "include", "platlib", "platstdlib", "purelib", "scripts", "stdlib"
+};
 
 config::config()
   : dotdatakeydir2config_map{ { "data", "data" },
@@ -115,6 +118,10 @@ config::setup(cxxopts::ParseResult &pr)
         }
     }
 
+    if (!get_framework(pr)) {
+        return false;
+    }
+
     for (auto path : python_paths) {
         if (!set_python_value(path, pr)) {
             return false;
@@ -143,8 +150,11 @@ config::set_python_value(std::string var, cxxopts::ParseResult &pr)
 {
     std::string output;
     std::string cmd = getoptorenv(pr, "python");
+    std::string scheme = pr["scheme"].as<std::string>();
     cmd += pcode_start;
     cmd += var;
+    cmd += pcode_middle;
+    cmd += get_scheme(scheme);
     cmd += pcode_end;
 
     if (!get_cmd_output(cmd, output, "")) {
@@ -211,6 +221,49 @@ config::get_algos(cxxopts::ParseResult &pr)
     new_db["algorithms"] = pystring::strip(output);
 
     return true;
+}
+
+bool
+config::get_framework(cxxopts::ParseResult &pr)
+{
+    if (!isosdarwin()) {
+        _framework = false;
+        return true;
+    }
+
+    std::string output;
+    std::string cmd;
+
+    cmd += getoptorenv(pr, "python");
+    cmd += framework_python;
+
+    if (!get_cmd_output(cmd, output, "")) {
+        return false;
+    }
+
+    _framework = !output.empty();
+
+    return true;
+}
+
+std::string
+config::get_scheme(std::string &key)
+{
+
+    if ("user" == key) {
+        return _framework ? "osx_framework_user" : "posix_user";
+    }
+    else if ("prefix" == key) {
+        return "posix_prefix";
+    }
+    else {
+        std::cerr << "This should not happen, ";
+        std::cerr << "config::get_scheme called with key=";
+        std::cerr << key << std::endl;
+        abort();
+    }
+
+    return "";
 }
 
 } // namespace crosswrench

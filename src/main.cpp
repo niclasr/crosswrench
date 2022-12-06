@@ -63,6 +63,10 @@ main(int argc, char *argv[])
               cxxopts::value<std::string>()->
               implicit_value("")->
               default_value(""))
+            ("scheme", "install scheme (prefix user)",
+              cxxopts::value<std::string>()->
+              implicit_value("")->
+              default_value("prefix"))
             ("verbose", "print files that are installed",
               cxxopts::value<bool>()->default_value("false"))
             ("wheel", "path to wheel file",
@@ -139,14 +143,14 @@ check_options(cxxopts::ParseResult &pr)
     }
 
     std::vector<std::string> run_opts{ "destdir", "wheel", "python" };
-    std::vector<std::string> optional_run_opts{ "direct-url",
-                                                "direct-url-archive",
-                                                "installer",
-                                                "script-prefix",
-                                                "script-suffix"
-                                                "verbose" };
+    std::vector<std::string> optional_run_opts{
+        "direct-url",    "direct-url-archive", "installer",
+        "script-prefix", "script-suffix",      "scheme",
+        "verbose"
+    };
     std::vector<std::string> direct_url_opts{ "direct-url",
                                               "direct-url-archive" };
+    std::vector<std::string> valid_scheme_values{ "prefix", "user" };
 
     bool has_run_opts = false;
     for (auto opt : run_opts) {
@@ -193,6 +197,14 @@ check_options(cxxopts::ParseResult &pr)
             if (pr["installer"].as<std::string>() == "") {
                 std::cerr << "--installer must be given a value or not used"
                           << std::endl;
+                areAllOptionsValid = false;
+            }
+        }
+        if (pr.count("scheme")) {
+            std::string schemearg = pr["scheme"].as<std::string>();
+            if (!crosswrench::strvec_contains(valid_scheme_values, schemearg)) {
+                std::cerr << "--scheme can only be given the value prefix "
+                          << "or user" << std::endl;
                 areAllOptionsValid = false;
             }
         }

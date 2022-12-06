@@ -456,4 +456,14 @@ getenvmsg(std::string &opt)
     return "";
 }
 
+bool
+isosdarwin()
+{
+#if defined(__APPLE__) && defined(__MACH__)
+    return true;
+#else
+    return false;
+#endif
+}
+
 } // namespace crosswrench

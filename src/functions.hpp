@@ -35,6 +35,7 @@ std::string expandhome(std::string);
 int countoptorenv(cxxopts::ParseResult &, std::string);
 std::string getoptorenv(cxxopts::ParseResult &, std::string);
 std::string getenvmsg(std::string &);
+bool isosdarwin();
 } // namespace crosswrench
 
 #endif
