@@ -32,10 +32,12 @@ SOFTWARE.
 #include <algorithm>
 #include <array>
 #include <cctype>
+#include <chrono>
 #include <cstdlib>
 #include <filesystem>
 #include <map>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace crosswrench {
@@ -179,7 +181,7 @@ get_cmd_output(std::string &cmd, std::string &output, std::string pipein)
                       << " did not finish in time" << std::endl;
             return false;
         }
-        usleep(250000);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
         exit_rounds++;
     }
 

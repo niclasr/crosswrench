@@ -26,8 +26,6 @@ SOFTWARE.
 
 #include <pystring.h>
 
-#include <unistd.h>
-
 #include <array>
 #include <cstdlib>
 #include <iostream>
