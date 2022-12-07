@@ -260,7 +260,7 @@ config::get_scheme(std::string &key)
         std::cerr << "This should not happen, ";
         std::cerr << "config::get_scheme called with key=";
         std::cerr << key << std::endl;
-        abort();
+        std::abort();
     }
 
     return "";
