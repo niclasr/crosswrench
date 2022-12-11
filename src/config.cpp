@@ -50,9 +50,9 @@ const std::string framework_python =
   " -c \"import sys; print(sys._framework);\"";
 
 const std::string pcode_start =
-  " -c \"import sysconfig; print(sysconfig.get_path('";
-const std::string pcode_middle = "','";
-const std::string pcode_end = "'));\"";
+  " -c \"import sysconfig;[print(i, sysconfig.get_path(i, '";
+const std::string pcode_end = "')) for i in sysconfig.get_path_names()]\"";
+
 const std::array<std::string, 7> python_paths{
     "data", "include", "platlib", "platstdlib", "purelib", "scripts", "stdlib"
 };
@@ -120,10 +120,8 @@ config::setup(cxxopts::ParseResult &pr)
         return false;
     }
 
-    for (auto path : python_paths) {
-        if (!set_python_value(path, pr)) {
-            return false;
-        }
+    if (!get_python_paths(pr)) {
+        return false;
     }
 
     if (!get_algos(pr)) {
@@ -144,14 +142,13 @@ config::setup(std::map<std::string, std::string> &input)
 }
 
 bool
-config::set_python_value(std::string var, cxxopts::ParseResult &pr)
+config::get_python_paths(cxxopts::ParseResult &pr)
 {
-    std::string output;
+    std::vector<std::string> output;
     std::string cmd = getoptorenv(pr, "python");
-    std::string scheme = pr["scheme"].as<std::string>();
+    std::string scheme = getoptorenv(pr, "scheme");
+
     cmd += pcode_start;
-    cmd += var;
-    cmd += pcode_middle;
     cmd += get_scheme(scheme);
     cmd += pcode_end;
 
@@ -159,9 +156,27 @@ config::set_python_value(std::string var, cxxopts::ParseResult &pr)
         return false;
     }
 
-    new_db[var] = pystring::strip(output);
+    std::vector<std::string> presult;
+    std::string sep = " ";
+    for (auto line : output) {
+        pystring::partition(line, sep, presult);
+        if (!presult[1].empty()) {
+            new_db[pystring::strip(presult[0])] = pystring::strip(presult[2]);
+        }
+    }
 
-    return true;
+    bool hasallvars = true;
+    for (auto key : python_paths) {
+        if (new_db.count(key) == 0) {
+            std::cerr << getoptorenv(pr, "python");
+            std::cerr << " is missing the path to \"";
+            std::cerr << key << "\", config failed";
+            std::cerr << std::endl;
+            hasallvars = false;
+        }
+    }
+
+    return hasallvars;
 }
 
 std::string
@@ -181,11 +196,11 @@ config::print_all()
 bool
 config::verify_python_interpreter(cxxopts::ParseResult &pr)
 {
-    std::string output;
+    std::vector<std::string> output;
     std::string cmd = getoptorenv(pr, "python");
     cmd += " --version";
     if (get_cmd_output(cmd, output, "")) {
-        if (pystring::startswith(pystring::lower(output), "python ")) {
+        if (pystring::startswith(pystring::lower(output.at(0)), "python ")) {
             return true;
         }
     }
@@ -208,7 +223,7 @@ config::dotdatakeydir2config(std::string &keydir)
 bool
 config::get_algos(cxxopts::ParseResult &pr)
 {
-    std::string output;
+    std::vector<std::string> output;
     std::string cmd = getoptorenv(pr, "python");
     cmd += algo_python;
 
@@ -216,7 +231,7 @@ config::get_algos(cxxopts::ParseResult &pr)
         return false;
     }
 
-    new_db["algorithms"] = pystring::strip(output);
+    new_db["algorithms"] = pystring::strip(output.at(0));
 
     return true;
 }
@@ -229,7 +244,7 @@ config::get_framework(cxxopts::ParseResult &pr)
         return true;
     }
 
-    std::string output;
+    std::vector<std::string> output;
     std::string cmd;
 
     cmd += getoptorenv(pr, "python");
@@ -239,7 +254,7 @@ config::get_framework(cxxopts::ParseResult &pr)
         return false;
     }
 
-    _framework = !output.empty();
+    _framework = !output.at(0).empty();
 
     return true;
 }

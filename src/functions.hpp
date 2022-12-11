@@ -18,7 +18,7 @@ std::string base64urlsafenopad(std::string);
 bool isrecordfilenames(std::string);
 std::filesystem::path rootinstalldir(bool);
 std::filesystem::path installdir(std::string);
-bool get_cmd_output(std::string &, std::string &, std::string);
+bool get_cmd_output(std::string &, std::vector<std::string> &, std::string);
 bool wheelhasabsolutepaths(libzippp::ZipArchive &);
 bool onlyalloweddotdatapaths(libzippp::ZipArchive &ar);
 std::filesystem::path dotdatainstalldir(std::string);

@@ -23,9 +23,9 @@ class config
   private:
     bool get_algos(cxxopts::ParseResult &);
     bool get_framework(cxxopts::ParseResult &);
-    bool set_python_value(std::string, cxxopts::ParseResult &);
     std::string get_scheme(std::string &);
     bool verify_python_interpreter(cxxopts::ParseResult &pr);
+    bool get_python_paths(cxxopts::ParseResult &);
     config();
     std::map<std::string, std::string> db;
     std::map<std::string, std::string> new_db;

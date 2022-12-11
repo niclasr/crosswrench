@@ -59,7 +59,7 @@ spread::compile()
         files += "\n";
     }
     const std::string cmdarg{ " -m compileall -i -" };
-    std::string output;
+    std::vector<std::string> output;
     auto pythonint = config::instance()->get_value("python");
     auto cmd = pythonint + cmdarg;
     if (!get_cmd_output(cmd, output, files)) {
