@@ -34,8 +34,10 @@ bool wheelhasdotdotpath(libzippp::ZipArchive &);
 std::string expandhome(std::string);
 int countoptorenv(cxxopts::ParseResult &, std::string);
 std::string getoptorenv(cxxopts::ParseResult &, std::string);
-std::string getenvmsg(std::string &);
+std::string envormsg(std::string &);
 bool isosdarwin();
+std::string envdescmsg(std::string opt);
+std::string envmsg(std::string opt, std::vector<std::string> &vmsg);
 } // namespace crosswrench
 
 #endif

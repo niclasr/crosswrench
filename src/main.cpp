@@ -43,7 +43,8 @@ main(int argc, char *argv[])
 
         // clang-format off
         options.add_options()
-            ("destdir", "destination root",
+            ("destdir",
+              "destination root" + crosswrench::envdescmsg("destdir"),
               cxxopts::value<std::string>()->implicit_value(""))
             ("direct-url", "url part of direct url",
               cxxopts::value<std::string>()->implicit_value(""))
@@ -53,7 +54,8 @@ main(int argc, char *argv[])
               cxxopts::value<std::string>()->
               implicit_value("")->
               default_value("crosswrench"))
-            ("python", "path to python interpreter",
+            ("python",
+              "path to python interpreter" + crosswrench::envdescmsg("python"),
               cxxopts::value<std::string>()->implicit_value(""))
             ("script-prefix", "prefix for script filenames",
               cxxopts::value<std::string>()->
@@ -158,7 +160,7 @@ check_options(cxxopts::ParseResult &pr)
             if (crosswrench::countoptorenv(pr, opt) == 1 &&
                 crosswrench::getoptorenv(pr, opt) == "")
             {
-                std::cerr << "--" << opt << crosswrench::getenvmsg(opt)
+                std::cerr << "--" << opt << crosswrench::envormsg(opt)
                           << " must be given an value" << std::endl;
                 areAllOptionsValid = false;
             }
@@ -188,7 +190,7 @@ check_options(cxxopts::ParseResult &pr)
     if (has_run_opts) {
         for (auto opt : run_opts) {
             if (crosswrench::countoptorenv(pr, opt) == 0) {
-                std::cerr << "--" << opt << crosswrench::getenvmsg(opt)
+                std::cerr << "--" << opt << crosswrench::envormsg(opt)
                           << " must be provided" << std::endl;
                 areAllOptionsValid = false;
             }
@@ -214,7 +216,7 @@ check_options(cxxopts::ParseResult &pr)
             if (pr.count(opt)) {
                 std::cerr << "--" << opt << " can only be used with ";
                 for (auto ropt : run_opts) {
-                    std::cerr << "--" << ropt << crosswrench::getenvmsg(opt)
+                    std::cerr << "--" << ropt << crosswrench::envormsg(opt)
                               << " ";
                 }
                 std::cerr << std::endl;

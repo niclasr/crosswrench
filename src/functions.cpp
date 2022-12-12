@@ -453,17 +453,12 @@ getoptorenv(cxxopts::ParseResult &pr, std::string opt)
 }
 
 std::string
-getenvmsg(std::string &opt)
+envormsg(std::string &opt)
 {
-    auto v = opt2env.find(opt);
-    if (v != opt2env.end()) {
-        std::string msg;
-        msg += " or environment variable ";
-        msg += v->second;
-        return msg;
-    }
+    std::vector<std::string> vmsg;
+    vmsg.push_back(" or environment variable ");
 
-    return "";
+    return envmsg(opt, vmsg);
 }
 
 bool
@@ -474,6 +469,28 @@ isosdarwin()
 #else
     return false;
 #endif
+}
+
+std::string
+envdescmsg(std::string opt)
+{
+    std::vector<std::string> vmsg;
+    vmsg.push_back(" (env: ");
+    vmsg.push_back(")");
+
+    return envmsg(opt, vmsg);
+}
+
+std::string
+envmsg(std::string opt, std::vector<std::string> &vmsg)
+{
+    auto v = opt2env.find(opt);
+    if (v != opt2env.end()) {
+        return vmsg.size() == 1 ? vmsg.at(0) + v->second
+                                : pystring::join(v->second, vmsg);
+    }
+
+    return "";
 }
 
 } // namespace crosswrench
