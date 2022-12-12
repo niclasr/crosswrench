@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+crosswrench
 
 # CMake
 CMakeLists.txt.user
@@ -43,6 +44,8 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+CPackConfig.cmake
+CPackSourceConfig.cmake
 
 # Generated files
 license.inc
