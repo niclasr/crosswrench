@@ -301,7 +301,7 @@ iselfexec(libzippp::ZipEntry &entry)
       (uint8_t *)entry.readAsBinary(libzippp::ZipArchive::Original,
                                     elf_hdrsize);
 
-    int magic = memcmp(data, elf_magic, sizeof(elf_magic));
+    int magic = std::memcmp(data, elf_magic, sizeof(elf_magic));
 
     uint8_t ei_class = data[0x04];
     uint8_t ei_endian = data[0x05];
