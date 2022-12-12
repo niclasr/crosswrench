@@ -158,7 +158,9 @@ installdir(std::string pythondir)
 }
 
 bool
-get_cmd_output(std::string &cmd, std::vector<std::string> &output, std::string pipein)
+get_cmd_output(std::string &cmd,
+               std::vector<std::string> &output,
+               std::string pipein)
 {
     unsigned int exit_rounds = 0;
     redi::pstreams::pmode pm =
@@ -171,7 +173,7 @@ get_cmd_output(std::string &cmd, std::vector<std::string> &output, std::string p
     }
 
     std::string outputline;
-    while(std::getline(in.out(), outputline)) {
+    while (std::getline(in.out(), outputline)) {
         output.push_back(outputline);
     }
     in.close();

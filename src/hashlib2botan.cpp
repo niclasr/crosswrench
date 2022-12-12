@@ -109,7 +109,7 @@ hashlib2botan::strongest_algorithm_botan()
 void
 hashlib2botan::print_guaranteed()
 {
-    for(auto str : algorithms_guaranteed) {
+    for (auto str : algorithms_guaranteed) {
         std::cout << str << std::endl;
     }
 }
