@@ -24,8 +24,9 @@ make
 make install
 ```
 ### Required dependencies
-- working c++17 compiler environment
+- working c++14 compiler environment
 - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) or [pkgconf](http://pkgconf.org/)
+- [boost](https://www.boost.org/)
 - [botan2](https://botan.randombit.net/)
 - [cmake](https://cmake.org/)
 - [libzip](https://libzip.org/)
