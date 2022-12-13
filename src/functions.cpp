@@ -408,7 +408,7 @@ wheelhasdotdotpath(libzippp::ZipArchive &ar)
 std::string
 expandhome(std::string path)
 {
-    if (pystring::startswith(path, "~/") && std::getenv("HOME") != NULL) {
+    if (pystring::startswith(path, "~/") && std::getenv("HOME") != nullptr) {
         std::string home{ std::getenv("HOME") };
         path = home + path.substr(1);
     }
@@ -425,7 +425,7 @@ countoptorenv(cxxopts::ParseResult &pr, std::string opt)
 
     auto v = opt2env.find(opt);
     if (v != opt2env.end()) {
-        if (std::getenv(v->second.c_str()) != NULL) {
+        if (std::getenv(v->second.c_str()) != nullptr) {
             return 1;
         }
     }
@@ -442,7 +442,7 @@ getoptorenv(cxxopts::ParseResult &pr, std::string opt)
 
     auto v = opt2env.find(opt);
     if (v != opt2env.end()) {
-        if (std::getenv(v->second.c_str()) != NULL) {
+        if (std::getenv(v->second.c_str()) != nullptr) {
             return std::string(std::getenv(v->second.c_str()));
         }
     }
