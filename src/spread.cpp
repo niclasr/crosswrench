@@ -319,7 +319,7 @@ spread::installdirecturl()
     directurldata += "    \"archive_info\": {\n";
     directurldata += "        \"hash\": \"" + hash_type + "=" + hash + "\"\n";
     directurldata += "    }\n";
-    directurldata += "}";
+    directurldata += "}\n";
 
     installfile(directurldata.data(), directurldata.size(), directurlpath);
     printverboseinstallloc("direct_url.json", directurlpath.string());
