@@ -316,7 +316,7 @@ spread::installdirecturl()
     std::string directurldata;
     directurldata += "{\n";
     directurldata += "    \"url\": \"" + url + "\",\n";
-    directurldata += "    archive_info\": {\n";
+    directurldata += "    \"archive_info\": {\n";
     directurldata += "        \"hash\": \"" + hash_type + "=" + hash + "\"\n";
     directurldata += "    }\n";
     directurldata += "}";
