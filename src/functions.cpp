@@ -442,8 +442,9 @@ getoptorenv(cxxopts::ParseResult &pr, std::string opt)
 
     auto v = opt2env.find(opt);
     if (v != opt2env.end()) {
-        if (std::getenv(v->second.c_str()) != nullptr) {
-            return std::string(std::getenv(v->second.c_str()));
+        char *envstr = std::getenv(v->second.c_str());
+        if (envstr != nullptr) {
+            return std::string{ envstr };
         }
     }
 
