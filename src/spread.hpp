@@ -4,10 +4,10 @@
 #include "hashlib2botan.hpp"
 #include "record.hpp"
 
+#include <boost/filesystem.hpp>
 #include <botan/hash.h>
 #include <libzippp.h>
 
-#include <filesystem>
 #include <set>
 #include <string>
 
@@ -20,16 +20,16 @@ class spread
     void install();
 
   private:
-    void add2record(std::filesystem::path,
+    void add2record(boost::filesystem::path,
                     std::unique_ptr<Botan::HashFunction> &);
     void compile();
-    void createdirs(std::filesystem::path);
-    std::filesystem::path createinstallpath(std::filesystem::path,
-                                            std::filesystem::path);
-    std::filesystem::path dotdatadirinstallpath(libzippp::ZipEntry &);
-    std::filesystem::path installpath(libzippp::ZipEntry &);
-    void installfile(libzippp::ZipEntry &, std::filesystem::path);
-    void installfile(const char *, size_t, std::filesystem::path);
+    void createdirs(boost::filesystem::path);
+    boost::filesystem::path createinstallpath(boost::filesystem::path,
+                                            boost::filesystem::path);
+    boost::filesystem::path dotdatadirinstallpath(libzippp::ZipEntry &);
+    boost::filesystem::path installpath(libzippp::ZipEntry &);
+    void installfile(libzippp::ZipEntry &, boost::filesystem::path);
+    void installfile(const char *, size_t, boost::filesystem::path);
     void installinstallerfile();
     uintptr_t writereplacedpython(const void *,
                                   libzippp_uint64,
@@ -42,9 +42,9 @@ class spread
     libzippp::ZipArchive &wheelfile;
     record record2write;
     bool rootispurelib;
-    std::filesystem::path destdir;
+    boost::filesystem::path destdir;
     std::ios_base::openmode outmode;
-    std::set<std::filesystem::path> py_files;
+    std::set<boost::filesystem::path> py_files;
     hashlib2botan h2b;
     bool verbose;
 };

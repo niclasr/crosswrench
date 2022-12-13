@@ -9,7 +9,7 @@ project(crosswrench
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(CrossWrench)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -45,6 +45,9 @@ cw_add_compile_flag(cw_all_targets INTERFACE -Wextra)
 
 # libs
 option(EXTERNAL_LIBS "Use external libs by default" OFF)
+find_package(Boost REQUIRED COMPONENTS "filesystem")
+target_link_libraries(cw_all_targets INTERFACE Boost::filesystem)
+target_compile_definitions(cw_all_targets INTERFACE BOOST_FILESYSTEM_VERSION=4)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(botan-2 REQUIRED IMPORTED_TARGET botan-2)
 target_link_libraries(cw_all_targets INTERFACE PkgConfig::botan-2)

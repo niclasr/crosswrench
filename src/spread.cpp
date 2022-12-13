@@ -25,6 +25,8 @@ SOFTWARE.
 #include "config.hpp"
 #include "functions.hpp"
 
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <botan/base64.h>
 #include <botan/hash.h>
 #include <libzippp.h>
@@ -32,7 +34,6 @@ SOFTWARE.
 #include <pystring.h>
 
 #include <cstring>
-#include <filesystem>
 #include <fstream>
 #include <ios>
 #include <iostream>
@@ -54,8 +55,7 @@ spread::compile()
     std::cout << "Byte-compiling .py files" << std::endl;
     std::string files;
     for (auto p : py_files) {
-        std::string pyfile = p;
-        files += pyfile;
+        files += p.string();
         files += "\n";
     }
     const std::string cmdarg{ " -m compileall -i -" };
@@ -92,17 +92,17 @@ spread::install()
     record2write.write(rootispurelib, destdir);
 }
 
-std::filesystem::path
-spread::createinstallpath(std::filesystem::path prefix,
-                          std::filesystem::path end)
+boost::filesystem::path
+spread::createinstallpath(boost::filesystem::path prefix,
+                          boost::filesystem::path end)
 {
-    std::filesystem::path filepath = destdir;
+    boost::filesystem::path filepath = destdir;
     filepath /= prefix;
     filepath /= end;
     return filepath;
 }
 
-std::filesystem::path
+boost::filesystem::path
 spread::dotdatadirinstallpath(libzippp::ZipEntry &entry)
 {
     std::vector<std::string> dirnames;
@@ -114,7 +114,7 @@ spread::dotdatadirinstallpath(libzippp::ZipEntry &entry)
                              pystring::join("/", dirnames_install));
 }
 
-std::filesystem::path
+boost::filesystem::path
 spread::installpath(libzippp::ZipEntry &entry)
 {
     if (pystring::startswith(entry.getName(), dotdatadir())) {
@@ -126,19 +126,21 @@ spread::installpath(libzippp::ZipEntry &entry)
 }
 
 void
-spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
+spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
 {
     if (isscript(entry)) {
         auto prefix = config::instance()->get_value("script-prefix");
         auto suffix = config::instance()->get_value("script-suffix");
-        filepath.replace_filename(prefix + filepath.stem().string() + suffix +
-                                  filepath.extension().string());
+        std::string newfilename = prefix + filepath.stem().string() + suffix +
+                                  filepath.extension().string();
+        filepath.remove_filename();
+        filepath /= newfilename;
     }
 
     bool replace_python = isscript(entry);
     bool setexec = isscript(entry) || iselfexec(entry);
 
-    std::ofstream output_p;
+    boost::filesystem::ofstream output_p;
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
 
     createdirs(filepath);
@@ -159,7 +161,7 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
     };
 
     // debugging
-    printverboseinstallloc(entry.getName(), filepath);
+    printverboseinstallloc(entry.getName(), filepath.string());
 
     wheelfile.readEntry(entry, writer);
     output_p.close();
@@ -178,9 +180,9 @@ spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
 void
 spread::installfile(const char *data,
                     size_t data_size,
-                    std::filesystem::path filepath)
+                    boost::filesystem::path filepath)
 {
-    std::ofstream output_p;
+    boost::filesystem::ofstream output_p;
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
 
     createdirs(filepath);
@@ -233,30 +235,31 @@ spread::installinstallerfile()
     std::cout << "Installing INSTALLER file" << std::endl;
     std::string installerstr = config::instance()->get_value("installer");
     installfile(installerstr.c_str(), installerstr.size(), installerpath);
-    printverboseinstallloc("INSTALLER", installerpath);
+    printverboseinstallloc("INSTALLER", installerpath.string());
 }
 
 void
-spread::add2record(std::filesystem::path filepath,
+spread::add2record(boost::filesystem::path filepath,
                    std::unique_ptr<Botan::HashFunction> &hasher)
 {
     auto filepathrelroot = pystring::strip(
-      std::filesystem::relative(filepath,
-                                destdir / rootinstalldir(rootispurelib)),
+      boost::filesystem::relative(filepath,
+                                  destdir / rootinstalldir(rootispurelib))
+        .string(),
       "\"");
 
     record2write.add(filepathrelroot,
                      h2b.strongest_algorithm_hashlib(),
                      base64urlsafenopad(Botan::base64_encode(hasher->final())),
-                     std::to_string(std::filesystem::file_size(filepath)));
+                     std::to_string(boost::filesystem::file_size(filepath)));
 }
 
 void
-spread::createdirs(std::filesystem::path filepath)
+spread::createdirs(boost::filesystem::path filepath)
 {
-    std::filesystem::path dirpath = filepath;
+    boost::filesystem::path dirpath = filepath;
     dirpath.remove_filename();
-    std::filesystem::create_directories(dirpath);
+    boost::filesystem::create_directories(dirpath);
 }
 
 void
@@ -270,11 +273,12 @@ spread::installentrypointconsolescripts()
             auto scriptsdir = destdir / dotdatainstalldir("scripts");
             std::cout << "Installing entry point console scripts" << std::endl;
             for (auto script : scripts) {
+                auto scriptpath = scriptsdir / script.first;
                 installfile(script.second.c_str(),
                             script.second.size(),
-                            scriptsdir / script.first);
-                setexecperms(scriptsdir / script.first);
-                printverboseinstallloc(script.first, scriptsdir / script.first);
+                            scriptpath);
+                setexecperms(scriptpath);
+                printverboseinstallloc(script.first, scriptpath.string());
             }
         }
     }
@@ -284,14 +288,14 @@ void
 spread::installdirecturl()
 {
     std::cout << "Installing direct_url.json" << std::endl;
-    std::ifstream input_p;
+    boost::filesystem::ifstream input_p;
     std::ios_base::openmode inmode{ std::ios_base::binary |
                                     std::ios_base::out };
 
     auto directurlpath = destdir / rootinstalldir(rootispurelib) /
                          dotdistinfodir() / "direct_url.json";
     std::string url = config::instance()->get_value("direct-url");
-    std::filesystem::path archive{ config::instance()->get_value(
+    boost::filesystem::path archive{ config::instance()->get_value(
       "direct-url-archive") };
     std::vector<uint8_t> buf(2048);
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
@@ -318,7 +322,7 @@ spread::installdirecturl()
     directurldata += "}";
 
     installfile(directurldata.data(), directurldata.size(), directurlpath);
-    printverboseinstallloc("direct_url.json", directurlpath);
+    printverboseinstallloc("direct_url.json", directurlpath.string());
 }
 
 void
