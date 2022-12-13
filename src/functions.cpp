@@ -34,6 +34,7 @@ SOFTWARE.
 #include <array>
 #include <cctype>
 #include <chrono>
+#include <cstdint>
 #include <cstdlib>
 #include <map>
 #include <string>

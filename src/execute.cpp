@@ -30,6 +30,7 @@ SOFTWARE.
 
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
 namespace crosswrench {
 

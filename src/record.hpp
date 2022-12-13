@@ -4,6 +4,7 @@
 #include <boost/filesystem.hpp>
 #include <libzippp.h>
 
+#include <array>
 #include <map>
 #include <string>
 
