@@ -25,6 +25,7 @@ SOFTWARE.
 #include "functions.hpp"
 #include "hashlib2botan.hpp"
 
+#include <boost/filesystem.hpp>
 #include <botan/base64.h>
 #include <botan/hash.h>
 #if defined(EXTERNAL_CSV2)
@@ -37,7 +38,6 @@ SOFTWARE.
 #include <pystring.h>
 
 #include <array>
-#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -222,15 +222,15 @@ record::add(std::string filepath,
 }
 
 void
-record::write(bool rootispurelib, std::filesystem::path destdir)
+record::write(bool rootispurelib, boost::filesystem::path destdir)
 {
     std::ofstream out;
-    std::filesystem::path filename = destdir;
+    boost::filesystem::path filename = destdir;
     filename /= rootinstalldir(rootispurelib);
     filename /= dotdistinfodir();
     filename /= "RECORD";
-    out.open(filename, std::ios_base::binary | std::ios_base::out);
-    csv2::Writer csv_w{ out };
+    out.open(filename.string(), std::ios_base::binary | std::ios_base::out);
+    csv2::Writer<csv2::delimiter<','>> csv_w{ out };
     for (auto r : records) {
         std::array<std::string, 3> content{ r.first,
                                             r.second.at(RHASHTYPE).empty()

@@ -72,7 +72,7 @@ IncludeCategories:
   - Regex:           '^"'
     Priority:        1
     SortPriority:    0
-  - Regex:           '^<(pystring|pstream|open|lib|cxxopts|csv2|botan)'
+  - Regex:           '^<(pystring|pstream|open|lib|cxxopts|csv2|botan|boost)'
     Priority:        2
     SortPriority:    0
   - Regex:           '<sys\/types\.h>'
