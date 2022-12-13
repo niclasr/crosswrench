@@ -33,6 +33,7 @@ SOFTWARE.
 #include <pstream.h>
 #include <pystring.h>
 
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <ios>
@@ -155,7 +156,7 @@ spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
             replace_python = false;
         }
 
-        hasher->update((const uint8_t *)data, data_size);
+        hasher->update((const std::uint8_t *)data, data_size);
         output_p.write((const char *)data, data_size);
         return bool(output_p);
     };
@@ -189,7 +190,7 @@ spread::installfile(const char *data,
 
     output_p.open(filepath, outmode);
 
-    hasher->update((const uint8_t *)data, data_size);
+    hasher->update((const std::uint8_t *)data, data_size);
     output_p.write(data, data_size);
 
     output_p.close();
@@ -216,7 +217,7 @@ spread::writereplacedpython(const void *data,
                                ? std::strlen(p_replacew)
                                : std::strlen(p_replace);
 
-            hasher->update((const uint8_t *)hashbangpythoninterp.c_str(),
+            hasher->update((const std::uint8_t *)hashbangpythoninterp.c_str(),
                            hashbangpythoninterp.size());
             output_p.write(hashbangpythoninterp.c_str(),
                            hashbangpythoninterp.size());
@@ -297,7 +298,7 @@ spread::installdirecturl()
     std::string url = config::instance()->get_value("direct-url");
     boost::filesystem::path archive{ config::instance()->get_value(
       "direct-url-archive") };
-    std::vector<uint8_t> buf(2048);
+    std::vector<std::uint8_t> buf(2048);
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
 
     input_p.open(archive, inmode);

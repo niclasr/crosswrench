@@ -27,6 +27,7 @@ SOFTWARE.
 #include <pystring.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -39,14 +40,14 @@ const unsigned long SupportedWheelVersionMajor = 1;
 const unsigned long SupportedWheelVersionMinor = 0;
 
 // helper function
-uint8_t mandatory = 0b1;
-uint8_t only_once = 0b10;
+std::uint8_t mandatory = 0b1;
+std::uint8_t only_once = 0b10;
 
 void
 find_values_in_wheel(std::vector<std::string> &lines,
                      std::vector<std::string> &result,
                      std::string key,
-                     uint8_t flags)
+                     std::uint8_t flags)
 {
     result.clear();
     auto key_l = pystring::lower(key);

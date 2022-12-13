@@ -257,8 +257,8 @@ strvec_contains(std::vector<std::string> &v, std::string &str)
     return result != v.end();
 }
 
-uint16_t
-getelf16(uint8_t endian, const uint8_t *data)
+std::uint16_t
+getelf16(std::uint8_t endian, const std::uint8_t *data)
 {
     if (endian == 1) { // little endian
         return (data[0] << 0) | (data[1] << 8);
@@ -268,8 +268,8 @@ getelf16(uint8_t endian, const uint8_t *data)
     }
 }
 
-uint32_t
-getelf32(uint8_t endian, const uint8_t *data)
+std::uint32_t
+getelf32(std::uint8_t endian, const std::uint8_t *data)
 {
     if (endian == 1) { // little endian
         return (data[0] << 0) | (data[1] << 8) | (data[2] << 16) |
@@ -284,31 +284,31 @@ getelf32(uint8_t endian, const uint8_t *data)
 bool
 iselfexec(libzippp::ZipEntry &entry)
 {
-    const uint8_t elf_magic[] = { 0x7F, 0x45, 0x4c, 0x46 };
+    const std::uint8_t elf_magic[] = { 0x7F, 0x45, 0x4c, 0x46 };
 
-    const uint8_t elf_32bit = 1;
-    const uint8_t elf_64bit = 2;
-    const uint8_t elf_little = 1;
-    const uint8_t elf_big = 2;
-    const uint16_t elf_exec = 0x02;
-    const uint16_t elf_shared = 0x03;
+    const std::uint8_t elf_32bit = 1;
+    const std::uint8_t elf_64bit = 2;
+    const std::uint8_t elf_little = 1;
+    const std::uint8_t elf_big = 2;
+    const std::uint16_t elf_exec = 0x02;
+    const std::uint16_t elf_shared = 0x03;
     const size_t elf_hdrsize = 0x40;
 
     if (entry.getSize() < elf_hdrsize) {
         return false;
     }
 
-    uint8_t *data =
-      (uint8_t *)entry.readAsBinary(libzippp::ZipArchive::Original,
+    std::uint8_t *data =
+      (std::uint8_t *)entry.readAsBinary(libzippp::ZipArchive::Original,
                                     elf_hdrsize);
 
     int magic = std::memcmp(data, elf_magic, sizeof(elf_magic));
 
-    uint8_t ei_class = data[0x04];
-    uint8_t ei_endian = data[0x05];
-    uint8_t ei_version = data[0x06];
-    uint16_t e_type = getelf16(ei_endian, data + 0x10);
-    uint32_t e_version = getelf32(ei_endian, data + 0x14);
+    std::uint8_t ei_class = data[0x04];
+    std::uint8_t ei_endian = data[0x05];
+    std::uint8_t ei_version = data[0x06];
+    std::uint16_t e_type = getelf16(ei_endian, data + 0x10);
+    std::uint32_t e_version = getelf32(ei_endian, data + 0x14);
 
     delete[] data;
 

@@ -38,6 +38,7 @@ SOFTWARE.
 #include <pystring.h>
 
 #include <array>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -170,7 +171,7 @@ record::verify(libzippp::ZipArchive &ar)
           Botan::HashFunction::create(h2b.hashname(re.at(RHASHTYPE)));
 
         auto hashupdate = [&](const void *data, libzippp_uint64 data_size) {
-            hasher->update((const uint8_t *)data, data_size);
+            hasher->update((const std::uint8_t *)data, data_size);
             return true;
         };
 
