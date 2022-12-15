@@ -409,9 +409,12 @@ wheelhasdotdotpath(libzippp::ZipArchive &ar)
 std::string
 expandhome(std::string path)
 {
-    if (pystring::startswith(path, "~/") && std::getenv("HOME") != nullptr) {
-        std::string home{ std::getenv("HOME") };
-        path = home + path.substr(1);
+    if (pystring::startswith(path, "~/")) {
+        char *envstr = std::getenv("HOME");
+        if (envstr != nullptr) {
+            std::string home{ envstr };
+            path = home + path.substr(1);
+        }
     }
 
     return path;
