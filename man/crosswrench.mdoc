@@ -81,6 +81,20 @@ show license
 show licenses of libraries used by crosswrench
 .It Fl -help
 show help
+.Sh ENVIRONMENT
+.Bl -tag -width PYTHONBIN
+.It Ev DESTDIR
+If
+.Fl -destdir Ns = Ns directory
+is not given then the root directory is taken from
+.Ev DESTDIR
+if it is set.
+.It Ev PYTHONBIN
+If
+.Fl -python Ns = Ns path
+is not given then the path to the python interpreter is taken from
+.Ev PYTHONBIN
+if it is set.
 .Sh STANDARDS
 .Nm
 is trying to be compliant with the python packaging standards at
