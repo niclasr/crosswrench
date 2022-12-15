@@ -20,7 +20,7 @@
 .\"OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 .\"SOFTWARE.
 .\"
-.Dd May 25, 2022
+.Dd Dec 15, 2022
 .Dt crosswrench 1
 .Sh NAME
 .Nm crosswrench
@@ -35,6 +35,7 @@
 .Op Fl -installer Ns = Ns name
 .Op Fl -script-prefix Ns = Ns prefix
 .Op Fl -script-suffix Ns = Ns suffix
+.Op Fl -scheme Ns = Ns scheme
 .Op Fl -verbose
 .Nm
 .Fl -license
@@ -68,6 +69,10 @@ put name into the INSTALLER file instead of crosswrench
 prefix to add to script names
 .It Fl -script-suffix Ns = Ns suffix
 suffix to add to script names
+.It Fl -scheme Ns = Ns scheme
+install scheme to use, can be either prefix or user.
+prefix is system wide installation, this is the default.
+user installs into the home directory of the executing user.
 .It Fl -verbose
 print files that are installed
 .It Fl -licence
