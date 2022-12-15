@@ -1,0 +1,73 @@
+#
+# This file is currently beta, it does not look for boost it just uses
+# it without check and does not support making the bundled libraries
+# external.
+# Add -f Makefile.mkc to mkcmake to use it.
+
+PROG=		crosswrench
+
+SRCS+=		src/config.cpp
+SRCS+=		src/functions.cpp
+SRCS+=		src/hashlib2botan.cpp
+SRCS+=		src/record.cpp
+SRCS+=		src/spread.cpp
+SRCS+=		src/wheel.cpp
+SRCS+=		src/execute.cpp
+SRCS+=		src/main.cpp
+SRCS+=		src/license.cpp
+
+CXX_STD=	c++14
+
+# libraries
+CPPFLAGS+=	-Ilibs/csv2
+CPPFLAGS+=	-Ilibs/cxxopts
+CPPFLAGS+=	-Ilibs/libzippp
+CPPFLAGS+=	-Ilibs/pstreams
+CPPFLAGS+=	-Ilibs/pystring
+
+SRCS+=		libs/libzippp/libzippp.cpp
+SRCS+=		libs/pystring/pystring.cpp
+
+LDADD+=		-lboost_filesystem
+
+MKC_REQUIRE_PKGCONFIG=	botan-2 libzip
+
+# generated files
+MKC_REQUIRE_PROG=	cat echo
+CPPFLAGS+=	-I.
+
+gen-stringliterals:
+	echo -n "const std::string cwLicense = R\"\"\"\"(" > license.inc
+	cat LICENSE >> license.inc
+	echo ")\"\"\"\";" >> license.inc
+	echo -n "const std::string cwLicenseLibs = R\"\"\"\"(" > license-libs.inc
+	cat LICENSE.libs >> license-libs.inc
+	echo ")\"\"\"\";" >> license-libs.inc
+
+license.o: gen-stringliterals
+
+CLEANFILES+=	*.inc
+
+# manpage and other files
+MAN=		man/crosswrench.1
+HTMLDIR=	${PREFIX}/share/doc/crosswrench
+
+FILES=		LICENSE LICENSE.libs
+FILESDIR=	${PREFIX}/share/doc/crosswrench
+
+# warnings
+MKC_CHECK_CXX_OPTS=	-Wall -Wextra
+
+.include <mkc.configure.mk>
+
+.if defined(HAVE_CXX_OPT.-Wall) \
+ && defined(HAVE_CXX_OPT.-Wextra)
+.if ${HAVE_CXX_OPT.-Wall} == 1
+CXXFLAGS+=-Wall
+.endif
+.if ${HAVE_CXX_OPT.-Wextra} == 1
+CXXFLAGS+=-Wextra
+.endif
+.endif
+
+.include <mkc.prog.mk>

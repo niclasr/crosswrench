@@ -47,6 +47,9 @@ _deps
 CPackConfig.cmake
 CPackSourceConfig.cmake
 
+# mk-configure
+_mkc_*
+
 # Generated files
 license.inc
 license-libs.inc
