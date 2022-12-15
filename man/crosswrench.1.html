@@ -132,18 +132,29 @@
 </dl>
 </section>
 <section class="Sh">
+<h1 class="Sh" id="ENVIRONMENT"><a class="permalink" href="#ENVIRONMENT">ENVIRONMENT</a></h1>
+<dl class="Bl-tag">
+  <dt id="DESTDIR"><a class="permalink" href="#DESTDIR"><code class="Ev">DESTDIR</code></a></dt>
+  <dd>If <code class="Fl">--destdir</code>=directory is not given then the root
+      directory is taken from <code class="Ev">DESTDIR</code> if it is set.</dd>
+  <dt id="PYTHONBIN"><a class="permalink" href="#PYTHONBIN"><code class="Ev">PYTHONBIN</code></a></dt>
+  <dd>If <code class="Fl">--python</code>=path is not given then the path to the
+      python interpreter is taken from <code class="Ev">PYTHONBIN</code> if it
+      is set.</dd>
+</dl>
+</section>
+<section class="Sh">
 <h1 class="Sh" id="STANDARDS"><a class="permalink" href="#STANDARDS">STANDARDS</a></h1>
 <p class="Pp"><code class="Nm">crosswrench</code> is trying to be compliant with
     the python packaging standards at
     <a class="Lk" href="https://packaging.python.org/en/latest/specifications/">https://packaging.python.org/en/latest/specifications/</a></p>
 <p class="Pp">Specifically:</p>
-<p class="Pp"><cite class="Rs"><i class="RsB">Binary distribution format</i>,
-    <a class="RsU" href="https://packaging.python.org/en/latest/specifications/binary-distribution-format/">https://packaging.python.org/en/latest/specifications/binary-distribution-format/</a>.</cite></p>
-<p class="Pp"><cite class="Rs"><i class="RsB">Record installed projects,
-    excluding direct URL</i>,
-    <a class="RsU" href="https://packaging.python.org/en/latest/specifications/recording-installed-projects/">https://packaging.python.org/en/latest/specifications/recording-installed-projects/</a>.</cite></p>
-<p class="Pp"><cite class="Rs"><i class="RsB">Entry points specification</i>,
-    <a class="RsU" href="https://packaging.python.org/en/latest/specifications/enty-points/">https://packaging.python.org/en/latest/specifications/enty-points/</a>.</cite></p>
+<p class="Pp"><a class="Lk" href="https://packaging.python.org/en/latest/specifications/binary-distribution-format/">Binary
+    distribution format</a></p>
+<p class="Pp"><a class="Lk" href="https://packaging.python.org/en/latest/specifications/recording-installed-packages/">Record
+    installed projects, excluding direct URL</a></p>
+<p class="Pp"><a class="Lk" href="https://packaging.python.org/en/latest/specifications/entry-points/">Entry
+    points specification</a></p>
 </section>
 <section class="Sh">
 <h1 class="Sh" id="AUTHORS"><a class="permalink" href="#AUTHORS">AUTHORS</a></h1>

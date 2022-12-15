@@ -105,6 +105,21 @@ show licenses of libraries used by crosswrench
 \fB\--help\fR
 .br
 show help
+.SH "ENVIRONMENT"
+.TP 11n
+\fRDESTDIR\fR
+If
+\fB\--destdir\fR=directory
+is not given then the root directory is taken from
+\fRDESTDIR\fR
+if it is set.
+.TP 11n
+\fRPYTHONBIN\fR
+If
+\fB\--python\fR=path
+is not given then the path to the python interpreter is taken from
+\fRPYTHONBIN\fR
+if it is set.
 .SH "STANDARDS"
 \fBcrosswrench\fR
 is trying to be compliant with the python packaging standards at
@@ -112,13 +127,10 @@ is trying to be compliant with the python packaging standards at
 .PP
 Specifically:
 .PP
-\fIBinary distribution format\fR,
-https://packaging.python.org/en/latest/specifications/binary-distribution-format/.
+\fIBinary distribution format\fR: \fBhttps://packaging.python.org/en/latest/specifications/binary-distribution-format/\fR
 .PP
-\fIRecord installed projects, excluding direct URL\fR,
-https://packaging.python.org/en/latest/specifications/recording-installed-projects/.
+\fIRecord installed projects, excluding direct URL\fR: \fBhttps://packaging.python.org/en/latest/specifications/recording-installed-packages/\fR
 .PP
-\fIEntry points specification\fR,
-https://packaging.python.org/en/latest/specifications/enty-points/.
+\fIEntry points specification\fR: \fBhttps://packaging.python.org/en/latest/specifications/entry-points/\fR
 .SH "AUTHORS"
 Niclas Rosenvik <\fIyouremailsarecrap@gmail.com\fR>
