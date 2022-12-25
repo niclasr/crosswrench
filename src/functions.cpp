@@ -165,8 +165,10 @@ get_cmd_output(std::string &cmd,
 {
     unsigned int exit_rounds = 0;
     redi::pstreams::pmode pm =
-      pipein.empty() ? redi::pstreams::pstdout
-                     : redi::pstreams::pstdin | redi::pstreams::pstdout;
+      redi::pstreams::pstdout | redi::pstreams::pstderr;
+    if (!pipein.empty()) {
+        pm |= redi::pstreams::pstdin;
+    }
     redi::pstream in(cmd, pm);
     if (!pipein.empty()) {
         in << pipein;
@@ -177,7 +179,18 @@ get_cmd_output(std::string &cmd,
     while (std::getline(in.out(), outputline)) {
         output.push_back(outputline);
     }
+    if (output.empty() && in.eof()) {
+        in.clear();
+        while (std::getline(in.err(), outputline)) {
+            output.push_back(outputline);
+        }
+    }
     in.close();
+
+    // in case the command prints nothing
+    if (output.empty()) {
+        output.push_back(std::string{});
+    }
 
     while (!in.rdbuf()->exited()) {
         if (exit_rounds > 4) {
