@@ -50,7 +50,7 @@ const std::string framework_python =
   " -c \"import sys; print(sys._framework);\"";
 
 const std::string pcode_start =
-  " -c \"import sysconfig;[print(i, sysconfig.get_path(i, '";
+  " -c \"import sysconfig;a=[print(i, sysconfig.get_path(i, '";
 const std::string pcode_end = "')) for i in sysconfig.get_path_names()]\"";
 
 const std::array<std::string, 7> python_paths{
