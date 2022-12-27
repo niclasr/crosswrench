@@ -313,7 +313,7 @@ iselfexec(libzippp::ZipEntry &entry)
 
     std::uint8_t *data =
       (std::uint8_t *)entry.readAsBinary(libzippp::ZipArchive::Original,
-                                    elf_hdrsize);
+                                         elf_hdrsize);
 
     int magic = std::memcmp(data, elf_magic, sizeof(elf_magic));
 
@@ -395,10 +395,10 @@ void
 setexecperms(boost::filesystem::path filepath)
 {
     boost::filesystem::permissions(filepath,
-                                 boost::filesystem::perms::owner_exe |
-                                   boost::filesystem::perms::group_exe |
-                                   boost::filesystem::perms::others_exe |
-                                   boost::filesystem::perms::add_perms);
+                                   boost::filesystem::perms::owner_exe |
+                                     boost::filesystem::perms::group_exe |
+                                     boost::filesystem::perms::others_exe |
+                                     boost::filesystem::perms::add_perms);
 }
 
 bool
