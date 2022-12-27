@@ -42,6 +42,11 @@ function(cw_library NAME)
         foreach(SRC_FILE IN LISTS CW_LIBRARY_SRCS)
             target_sources(cw_shared_src PRIVATE
                            ${CMAKE_SOURCE_DIR}/libs/${NAME}/${SRC_FILE})
+            # unity builds are available on cmake 3.16 and higher
+            if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
+                set_source_files_properties(${CMAKE_SOURCE_DIR}/libs/${NAME}/${SRC_FILE}
+                                            PROPERTIES SKIP_UNITY_BUILD_INCLUSION true)
+            endif()
         endforeach()
     endif()
 endfunction()
