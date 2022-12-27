@@ -231,7 +231,7 @@ onlyalloweddotdatapaths(libzippp::ZipArchive &ar)
 {
     auto entries = ar.getEntries();
 
-    for (auto entry : entries) {
+    for (auto &entry : entries) {
         if (entry.isDirectory()) {
             continue;
         }
@@ -345,7 +345,7 @@ getentrypointscripts(libzippp::ZipEntry &entry)
     });
 
     std::array<std::string, 2> sections{ "[console_scripts]", "[gui_scripts]" };
-    for (auto section : sections) {
+    for (auto &section : sections) {
         auto sec_start = std::find(lines.begin(), lines.end(), section);
         if (sec_start != lines.end()) {
             sec_start++; // we must start on the line after sec_start since
@@ -406,7 +406,7 @@ wheelhasdotdotpath(libzippp::ZipArchive &ar)
 {
     std::string dotdot{ ".." };
     auto entries = ar.getEntries();
-    for (auto entry : entries) {
+    for (auto &entry : entries) {
         auto name = entry.getName();
         std::vector<std::string> namesplited;
         pystring::split(name, namesplited, "/");

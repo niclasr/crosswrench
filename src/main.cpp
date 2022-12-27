@@ -126,17 +126,17 @@ check_options(cxxopts::ParseResult &pr)
     bool areAllOptionsValid = true;
 
     std::list<std::string> unmatched_opts;
-    for (auto opt : pr.unmatched()) {
+    for (auto &opt : pr.unmatched()) {
         unmatched_opts.emplace_back(opt);
     }
     unmatched_opts.sort();
     unmatched_opts.unique();
-    for (auto opt : unmatched_opts) {
+    for (auto &opt : unmatched_opts) {
         std::cerr << opt << " is an unrecognized option" << std::endl;
         areAllOptionsValid = false;
     }
 
-    for (auto opt : pr.arguments()) {
+    for (auto &opt : pr.arguments()) {
         if (pr.count(opt.key()) != 1) {
             std::cerr << "--" << opt.key() << " must be used only once"
                       << std::endl;
@@ -155,7 +155,7 @@ check_options(cxxopts::ParseResult &pr)
     std::vector<std::string> valid_scheme_values{ "prefix", "user" };
 
     bool has_run_opts = false;
-    for (auto opt : run_opts) {
+    for (auto &opt : run_opts) {
         if (crosswrench::countoptorenv(pr, opt)) {
             if (crosswrench::countoptorenv(pr, opt) == 1 &&
                 crosswrench::getoptorenv(pr, opt) == "")
@@ -170,7 +170,7 @@ check_options(cxxopts::ParseResult &pr)
 
     bool all_directurl_opts_unset = true;
     bool all_directurl_opts_set = true;
-    for (auto opt : direct_url_opts) {
+    for (auto &opt : direct_url_opts) {
         if (pr.count(opt)) {
             all_directurl_opts_unset = false;
         }
@@ -180,7 +180,7 @@ check_options(cxxopts::ParseResult &pr)
     }
     if (!(all_directurl_opts_set ^ all_directurl_opts_unset)) {
         std::cerr << "the options ";
-        for (auto opt : direct_url_opts) {
+        for (auto &opt : direct_url_opts) {
             std::cerr << "--" << opt << " ";
         }
         std::cerr << "can only be used together" << std::endl;
@@ -188,7 +188,7 @@ check_options(cxxopts::ParseResult &pr)
     }
 
     if (has_run_opts) {
-        for (auto opt : run_opts) {
+        for (auto &opt : run_opts) {
             if (crosswrench::countoptorenv(pr, opt) == 0) {
                 std::cerr << "--" << opt << crosswrench::envormsg(opt)
                           << " must be provided" << std::endl;
@@ -212,10 +212,10 @@ check_options(cxxopts::ParseResult &pr)
         }
     }
     else {
-        for (auto opt : optional_run_opts) {
+        for (auto &opt : optional_run_opts) {
             if (pr.count(opt)) {
                 std::cerr << "--" << opt << " can only be used with ";
-                for (auto ropt : run_opts) {
+                for (auto &ropt : run_opts) {
                     std::cerr << "--" << ropt << crosswrench::envormsg(opt)
                               << " ";
                 }
@@ -225,7 +225,7 @@ check_options(cxxopts::ParseResult &pr)
         }
     }
     std::vector<std::string> lone_options{ "help", "license", "license-libs" };
-    for (auto opt : lone_options) {
+    for (auto &opt : lone_options) {
         if (pr.count(opt)) {
             std::cerr << "--" << opt << " must be used alone" << std::endl;
         }

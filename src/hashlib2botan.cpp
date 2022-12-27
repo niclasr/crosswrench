@@ -63,7 +63,7 @@ hashlib2botan::hashlib2botan()
     std::string ag_str = config::instance()->get_value("algorithms");
     pystring::split(ag_str, algo_g, ",");
 
-    for (auto str : algo_g) {
+    for (auto &str : algo_g) {
         algorithms_guaranteed.push_back(pystring::strip(str, "{}' "));
     }
 }
@@ -89,7 +89,7 @@ std::string
 hashlib2botan::strongest_algorithm_hashlib()
 {
     if (best_algo.empty()) {
-        for (auto str : algorithms_by_strength) {
+        for (auto &str : algorithms_by_strength) {
             if (available(str) && strvec_contains(algorithms_guaranteed, str)) {
                 best_algo = str;
                 break;
@@ -109,7 +109,7 @@ hashlib2botan::strongest_algorithm_botan()
 void
 hashlib2botan::print_guaranteed()
 {
-    for (auto str : algorithms_guaranteed) {
+    for (auto &str : algorithms_guaranteed) {
         std::cout << str << std::endl;
     }
 }

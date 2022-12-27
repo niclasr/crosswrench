@@ -91,7 +91,7 @@ config::setup(cxxopts::ParseResult &pr)
         return false;
     }
 
-    for (auto opt : config_opts) {
+    for (auto &opt : config_opts) {
         if (strvec_contains(path_opts, opt)) {
             new_db[opt] = expandhome(getoptorenv(pr, opt));
         }
@@ -107,7 +107,7 @@ config::setup(cxxopts::ParseResult &pr)
         new_db["verbose"] = "false";
     }
 
-    for (auto opt : directurl_opts) {
+    for (auto &opt : directurl_opts) {
         if (pr.count(opt)) {
             new_db[opt] = pr[opt].as<std::string>();
         }
@@ -158,7 +158,7 @@ config::get_python_paths(cxxopts::ParseResult &pr)
 
     std::vector<std::string> presult;
     std::string sep = " ";
-    for (auto line : output) {
+    for (auto &line : output) {
         pystring::partition(line, sep, presult);
         if (!presult[1].empty()) {
             new_db[pystring::strip(presult[0])] = pystring::strip(presult[2]);
@@ -166,7 +166,7 @@ config::get_python_paths(cxxopts::ParseResult &pr)
     }
 
     bool hasallvars = true;
-    for (auto key : python_paths) {
+    for (auto &key : python_paths) {
         if (new_db.count(key) == 0) {
             std::cerr << getoptorenv(pr, "python");
             std::cerr << " is missing the path to \"";
@@ -188,7 +188,7 @@ config::get_value(std::string key)
 void
 config::print_all()
 {
-    for (auto i : db) {
+    for (auto &i : db) {
         std::cout << i.first << ": " << i.second << std::endl;
     }
 }

@@ -77,7 +77,7 @@ record::record(std::string content)
             }
             else {
                 unsigned int cell_index = 0;
-                for (const auto cell : row) {
+                for (const auto &cell : row) {
                     switch (cell_index) {
                         case 0:
                             cell.read_value(from_csv[0]);
@@ -147,7 +147,7 @@ record::verify(libzippp::ZipArchive &ar)
     std::vector<libzippp::ZipEntry> wentries = ar.getEntries();
     hashlib2botan h2b;
 
-    for (auto i : records) {
+    for (auto &i : records) {
         if (!ar.hasEntry(i.first)) {
             std::cerr << i.first << " is in RECORD but not in wheelfile"
                       << std::endl;
@@ -155,7 +155,7 @@ record::verify(libzippp::ZipArchive &ar)
         }
     }
 
-    for (auto we : wentries) {
+    for (auto &we : wentries) {
         if (we.isDirectory() || isrecordfilenames(we.getName())) {
             continue;
         }
@@ -232,7 +232,7 @@ record::write(bool rootispurelib, boost::filesystem::path destdir)
     filename /= "RECORD";
     out.open(filename.string(), std::ios_base::binary | std::ios_base::out);
     csv2::Writer<csv2::delimiter<','>> csv_w{ out };
-    for (auto r : records) {
+    for (auto &r : records) {
         std::array<std::string, 3> content{ r.first,
                                             r.second.at(RHASHTYPE).empty()
                                               ? ""

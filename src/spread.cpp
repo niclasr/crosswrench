@@ -55,7 +55,7 @@ spread::compile()
 {
     std::cout << "Byte-compiling .py files" << std::endl;
     std::string files;
-    for (auto p : py_files) {
+    for (auto &p : py_files) {
         files += p.string();
         files += "\n";
     }
@@ -76,7 +76,7 @@ spread::install()
 {
     std::cout << "Installing files" << std::endl;
     auto files = wheelfile.getEntries();
-    for (auto file : files) {
+    for (auto &file : files) {
         // files that should not be installed
         if (isrecordfilenames(file.getName()) || file.isDirectory()) {
             continue;
@@ -273,7 +273,7 @@ spread::installentrypointconsolescripts()
         if (!scripts.empty()) {
             auto scriptsdir = destdir / dotdatainstalldir("scripts");
             std::cout << "Installing entry point console scripts" << std::endl;
-            for (auto script : scripts) {
+            for (auto &script : scripts) {
                 auto scriptpath = scriptsdir / script.first;
                 installfile(script.second.c_str(),
                             script.second.size(),
