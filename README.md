@@ -42,4 +42,6 @@ These are:
 The CMake argument -DEXTERNAL_LIBS=ON makes them all external by default, -DEXTERNAL_#NAME#=ON where #NAME#
 is the name in uppercase of the dependency listed above makes the individual dependency external.
 
-**crosswrench** requires a python interpreter to install wheels, only [cpython](https://www.python.org/) has been tested.
+**crosswrench** requires a python 3 interpreter with the
+[sysconfig module](https://docs.python.org/3/library/sysconfig.html)
+to install wheels, only [cpython](https://www.python.org/) has been tested.
