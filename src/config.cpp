@@ -63,6 +63,7 @@ config::config()
                               { "platlib", "platlib" },
                               { "purelib", "purelib" },
                               { "scripts", "scripts" } }
+  , _framework{ false }
 {}
 
 config *
