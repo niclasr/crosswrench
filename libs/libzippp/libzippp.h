@@ -93,18 +93,61 @@ struct zip_source;
 #define LIBZIPPP_ERROR_OWRITE_INDEX_FAILURE -36
 #define LIBZIPPP_ERROR_UNKNOWN -99
 
-#ifdef __cplusplus
-        #define LIBZIPPP_EXTERN_CPP_BEGIN extern "C++" {
-        #define LIBZIPPP_EXTERN_CPP_END   }
-#else
-        #define LIBZIPPP_EXTERN_CPP_BEGIN
-        #define LIBZIPPP_EXTERN_CPP_END
-#endif
+/**
+ * User-defined error-handler.
+ * See https://libzip.org/documentation/zip_error_system_type.html
+ *
+ * The default handler just print the error by the following way:
+ *   fprintf(stderr, message.c_str(), strerror.c_str());
+ *
+ * Parameters are:
+ * - message: A message, with possible placeholders (%s) for printf.
+ * - strerror: A description of the error message, issued from libzip (see zip_error_strerror).
+ * - zip_error_code: the libzip error code.
+ * - system_error_code: the system error code.
+ */
+typedef void ErrorHandlerCallback(const std::string& message,
+                                  const std::string& strerror,
+                                  int zip_error_code,
+                                  int system_error_code);
 
-LIBZIPPP_EXTERN_CPP_BEGIN
 namespace libzippp {
     class ZipEntry;
     class ZipProgressListener;
+
+    /**
+     * Compression algorithm to use.
+     * See https://libzip.org/documentation/zip_set_file_compression.html
+     */
+    enum CompressionMethod {
+      DEFAULT = 0,
+      STORE,
+      DEFLATE,
+#ifdef ZIP_CM_BZIP2
+      BZIP2,
+#endif
+#ifdef ZIP_CM_XZ
+      XZ,
+#endif
+#ifdef ZIP_CM_ZSTD
+      ZSTD
+#endif
+     };
+
+// BZIP2
+#ifdef ZIP_CM_BZIP2
+#define LIBZIPPP_USE_BZIP2
+#endif
+
+// XZ
+#ifdef ZIP_CM_XZ
+#define LIBZIPPP_USE_XZ
+#endif
+
+// ZSTD
+#ifdef ZIP_CM_ZSTD
+#define LIBZIPPP_USE_ZSTD
+#endif
 
     /**
      * Represents a ZIP archive. This class provides useful methods to handle an archive
@@ -165,39 +208,75 @@ namespace libzippp {
          *
          * http://nih.at/listarchive/libzip-discuss/msg00219.html
          *
-         * The zip file to be read/written
-         * The password to be used to encrypt/decrypt each file within the zip file
-         * The algorithm to be used by libzip when writing a zip file. The defined algorithm will use the password for each file within the zip file.
-         *
+         * The arguments are:
+         * - The zip file to be read/written.
+         * - The password to be used to encrypt/decrypt each file within the zip file.
+         * - The algorithm to be used by libzip when writing a zip file. The defined algorithm will use the password for each file within the zip file.
          */
         explicit ZipArchive(const std::string& zipPath, const std::string& password="", Encryption encryptionMethod=Encryption::None);
-        virtual ~ZipArchive(void); //commit all the changes if open
+
+        /**
+         * Commit all the changes of the archive and deletes the pointer.
+         * It is recommended to use ZipArchive::free instead of deleting directly the pointer
+         * especially if the ZipArchive was created with the ZipArchive::fromSource or ZipArchive::fromBuffer
+         * methods.
+         */
+        virtual ~ZipArchive(void);
 
         /**
          * Creates a new ZipArchive with the given source. The archive will directly
          * be open with the given mode. If the archive fails to be open or
-         * if the consistency check fails, this method will return null.
+         * if the consistency check fails, this method will return null and the source
+         * is left untouched.
+         *
+         * Use ZipArchive::free to delete the returned pointer.
          */
         static ZipArchive* fromSource(zip_source* source, OpenMode mode=ReadOnly, bool checkConsistency=false);
 
         /**
-         * Creates a new ZipArchive from the specified buffer. The archive will
+         * Creates a new ZipArchive from the specified data. The archive will
+         * directly be open in ReadOnly mode. If the archive fails to be open or
+         * if the consistency check fails, this method will return null.
+         * The data pointer must remain valid while the ZipArchive is alive.
+         * The data pointer won't be freed by the ZipArchive and won't be modified,
+         * even when ZipArchive::close is used.
+         *
+         * Use ZipArchive::free to delete the returned pointer.
+         */
+        static ZipArchive* fromBuffer(const void* data, libzippp_uint32 size, bool checkConsistency=false);
+
+        /**
+         * Creates a new ZipArchive from the specified data. The archive will
          * directly be open with the given mode. If the archive fails to be open or
          * if the consistency check fails, this method will return null.
-         * The buffer data must remain valid while the ZipArchive is alive.
-         * The buffer won't be freed by the ZipArchive.
+         * The data pointer must remain valid while the ZipArchive is alive.
+         * The data pointer won't be freed by the ZipArchive.
          *
-         * If the mode is New or Write, then the buffer will be updated when the ZipArchive is
-         * closed and is new length will be available through the getBufferLength method.
+         * If the mode is New or Write, then the data pointer will be updated when the ZipArchive is
+         * closed and its new length will be available through the ZipArchive::getBufferLength method.
+         *
+         * WARNING: do NOT use dynamicly allocated memory with the 'new' keyword as data, because since
+         * the data array might be extended by realloc, it *might* not be compatible with C++ 'new' keyword.
+         * Use the standard malloc/calloc instead.
+         *
+         * Use ZipArchive::free to delete the returned pointer.
          */
-        static ZipArchive* fromBuffer(void* buffer, libzippp_uint32 size, OpenMode mode=ReadOnly, bool checkConsistency=false);
+        static ZipArchive* fromWriteableBuffer(void** data, libzippp_uint32 size, OpenMode mode=Write, bool checkConsistency=false);
+
+        /**
+         * Deletes a ZipArchive.
+         * In order to ensure boundaries between DLLs it is recommended to always use this function
+         * in order to delete a ZipArchive pointer.
+         * This will commit all the pending changes to the archive.
+         */
+        static void free(ZipArchive* archive);
 
         /**
          * Returns the buffer length of the buffer when the fromBuffer method has been used to create
-         * the archive. Otherwise, this method returns -1.
+         * the archive. Otherwise, this method returns 0.
          * When the archive has been closed, this value will contains the new length of the buffer.
          */
-        inline libzippp_uint32 getBufferLength(void) const { return bufferLength; }
+        inline libzippp_uint64 getBufferLength(void) const { return bufferLength; }
 
         /**
          * Returns the path of the ZipArchive.
@@ -324,8 +403,7 @@ namespace libzippp {
          * Defines the compression method of an entry. If the ZipArchive is not open
          * or the entry is not linked to this archive, false will be returned.
          **/
-        bool isEntryCompressionEnabled(const ZipEntry& entry) const;
-        bool setEntryCompressionEnabled(const ZipEntry& entry, bool value) const;
+        bool setEntryCompressionMethod(ZipEntry& entry, CompressionMethod compMethod = CompressionMethod::DEFAULT) const;
 
         /**
          * Reads the specified ZipEntry of the ZipArchive and returns its content within
@@ -465,7 +543,7 @@ namespace libzippp {
 
         /**
          * Returns the underlying libzip source used by this ZipArchive.
-         * This value will be set only when fromBuffer is used.
+         * This value will be available only when the archive has been created with ZipArchive::fromBuffer.
          */
         inline zip_source* getZipSource(void) const { return zipSource; }
 
@@ -496,6 +574,12 @@ namespace libzippp {
         inline double getProgressPrecision(void) const { return progressPrecision; }
         void setProgressPrecision(double p) { progressPrecision = p; }
 
+        void setErrorHandlerCallback(ErrorHandlerCallback* callback) {
+           errorHandlingCallback = callback;
+        }
+
+        void setCompressionMethod(CompressionMethod comp);
+
     private:
         std::string path;
         zip* zipHandle;
@@ -506,11 +590,17 @@ namespace libzippp {
         std::vector<ZipProgressListener*> listeners;
         double progressPrecision;
 
-        void* bufferData;
-        libzippp_uint32 bufferLength;
+        void** bufferData;
+        libzippp_uint64 bufferLength;
+
+        bool useArchiveCompressionMethod;
+        libzippp_uint16 compressionMethod;
+
+        // User-defined error handler
+        ErrorHandlerCallback* errorHandlingCallback;
 
         //open from in-memory data
-        bool openBuffer(void* buffer, libzippp_uint32 sz, OpenMode mode=ReadOnly, bool checkConsistency=false);
+        bool openBuffer(void** buffer, libzippp_uint32 sz, OpenMode mode=ReadOnly, bool checkConsistency=false);
         bool openSource(zip_source* source, OpenMode mode=ReadOnly, bool checkConsistency=false);
 
         //generic method to create ZipEntry
@@ -529,7 +619,7 @@ namespace libzippp {
     public:
 
         /**
-         * This method is invoked during while the changes are being committed during
+         * This method is invoked while the changes are being committed during
          * the closing of the ZipArchive.
          * The value p is a double between 0 and 1, representing the overall progression.
          * The frequency of invocation of this method depends of the precision.
@@ -540,6 +630,13 @@ namespace libzippp {
          * set in libzip.
          */
         virtual void progression(double p) = 0;
+        /**
+         * This method is invoked during zip/unzip operations.
+         * Define this function to be able to stop a long zip/unzip operation.
+         * If this function return 1 the operation is cancelled.
+         * If this function return 0 the operation will continue.
+         */
+        virtual int cancel() = 0;
     };
 
     /**
@@ -575,7 +672,7 @@ namespace libzippp {
          * Returns the compression method. By default, ZIP_CM_DEFAULT.
          * Can be one of ZIP_CM_DEFAULT,ZIP_CM_STORE,ZIP_CM_BZIP2,ZIP_CM_DEFLATE,ZIP_CM_XZ or ZIP_CM_ZSTD.
          */
-        inline libzippp_uint16 getCompressionMethod(void) const { return compressionMethod; }
+        CompressionMethod getCompressionMethod(void) const;
 
         /**
          * Returns the encryption method.
@@ -584,14 +681,14 @@ namespace libzippp {
         inline libzippp_uint16 getEncryptionMethod(void) const { return encryptionMethod; }
 
         /**
-         * Returns the size of the file (not deflated).
+         * Returns the size of the file (uncompressed).
          */
         inline libzippp_uint64 getSize(void) const { return size; }
 
         /**
-         * Returns the size of the inflated file.
+         * Returns the size of the deflated file (compressed).
          */
-        inline libzippp_uint64 getInflatedSize(void) const { return sizeComp; }
+        inline libzippp_uint64 getDeflatedSize(void) const { return sizeComp; }
 
         /**
          * Returns the CRC of the file.
@@ -614,12 +711,11 @@ namespace libzippp {
         inline bool isNull(void) const { return zipFile==nullptr; }
 
         /**
-         * Defines if the compression is enabled for this entry.
-         * Those methods are wrappers arount ZipArchive::isEntryCompressionEnabled and
-         * ZipArchive::setEntryCompressionEnabled.
+         * Defines the compression method to be used
+         * Those methods are wrappers around setEntryCompressionMethod and
+         * getCompressionMethod.
          */
-        bool isCompressionEnabled(void) const;
-        bool setCompressionEnabled(bool value) const;
+        bool setCompressionMethod(CompressionMethod compMethod);
 
         /**
          * Defines the comment of the entry. In order to call either one of those
@@ -676,7 +772,6 @@ namespace libzippp {
                 zipFile(zipFile), name(name), index(index), time(time), compressionMethod(compMethod), encryptionMethod(encMethod), size(size), sizeComp(sizeComp), crc(crc) {}
     };
 }
-LIBZIPPP_EXTERN_CPP_END
 
 #endif
 
