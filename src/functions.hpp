@@ -27,7 +27,7 @@ bool isscript(libzippp::ZipEntry &);
 bool strvec_contains(std::vector<std::string> &, std::string &);
 std::uint16_t getelf16(std::uint8_t, const std::uint8_t *);
 std::uint32_t getelf32(std::uint8_t, const std::uint8_t *);
-bool iselfexec(libzippp::ZipEntry &);
+bool iselfexec(libzippp::ZipEntry &, libzippp::ZipArchive &);
 std::map<std::string, std::string> getentrypointscripts(libzippp::ZipEntry &);
 std::string createscript(std::string &);
 void setexecperms(boost::filesystem::path);

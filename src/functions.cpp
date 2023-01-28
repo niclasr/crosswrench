@@ -295,7 +295,7 @@ getelf32(std::uint8_t endian, const std::uint8_t *data)
 }
 
 bool
-iselfexec(libzippp::ZipEntry &entry)
+iselfexec(libzippp::ZipEntry &entry, libzippp::ZipArchive &wheel)
 {
     const std::uint8_t elf_magic[] = { 0x7F, 0x45, 0x4c, 0x46 };
 
@@ -314,6 +314,14 @@ iselfexec(libzippp::ZipEntry &entry)
     std::uint8_t *data =
       (std::uint8_t *)entry.readAsBinary(libzippp::ZipArchive::Original,
                                          elf_hdrsize);
+
+    if(data == nullptr) {
+        std::string elf_error{"iselfexec: could not read "};
+        elf_error += entry.getName();
+        elf_error += " in ";
+        elf_error += wheel.getPath();
+        throw elf_error;
+    }
 
     int magic = std::memcmp(data, elf_magic, sizeof(elf_magic));
 

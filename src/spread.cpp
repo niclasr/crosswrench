@@ -139,7 +139,7 @@ spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
     }
 
     bool replace_python = isscript(entry);
-    bool setexec = isscript(entry) || iselfexec(entry);
+    bool setexec = isscript(entry) || iselfexec(entry, wheelfile);
 
     boost::filesystem::ofstream output_p;
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
