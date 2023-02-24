@@ -329,8 +329,8 @@ iselfexec(libzippp::ZipEntry &entry, libzippp::ZipArchive &wheel)
       (std::uint8_t *)entry.readAsBinary(libzippp::ZipArchive::Original,
                                          elf_hdrsize);
 
-    if(data == nullptr) {
-        std::string elf_error{"iselfexec: could not read "};
+    if (data == nullptr) {
+        std::string elf_error{ "iselfexec: could not read " };
         elf_error += entry.getName();
         elf_error += " in ";
         elf_error += wheel.getPath();
