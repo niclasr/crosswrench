@@ -164,7 +164,16 @@ spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
     // debugging
     printverboseinstallloc(entry.getName(), filepath.string());
 
-    wheelfile.readEntry(entry, writer);
+    int ret = wheelfile.readEntry(entry, writer);
+    if (ret != LIBZIPPP_OK) {
+        std::string msg{ "error of type " };
+        msg += libzipppretcodestr(ret);
+        msg += " when writing ";
+        msg += entry.getName();
+        msg += " to ";
+        msg += filepath.string();
+        throw msg;
+    }
     output_p.close();
 
     if (setexec) {

@@ -60,6 +60,20 @@ distdashversion()
 std::map<std::string, std::string> opt2env{ { "destdir", "DESTDIR" },
                                             { "python", "PYTHONBIN" } };
 
+std::map<int, std::string> libzippdef2str{
+    { LIBZIPPP_OK, "LIBZIPPP_OK" },
+    { LIBZIPPP_ERROR_NOT_OPEN, "LIBZIPPP_ERROR_NOT_OPEN" },
+    { LIBZIPPP_ERROR_NOT_ALLOWED, "LIBZIPPP_ERROR_NOT_ALLOWED" },
+    { LIBZIPPP_ERROR_INVALID_ENTRY, "LIBZIPPP_ERROR_INVALID_ENTRY" },
+    { LIBZIPPP_ERROR_INVALID_PARAMETER, "LIBZIPPP_ERROR_INVALID_PARAMETER" },
+    { LIBZIPPP_ERROR_MEMORY_ALLOCATION, "LIBZIPPP_ERROR_MEMORY_ALLOCATION" },
+    { LIBZIPPP_ERROR_FOPEN_FAILURE, "LIBZIPPP_ERROR_FOPEN_FAILURE" },
+    { LIBZIPPP_ERROR_FREAD_FAILURE, "LIBZIPPP_ERROR_FREAD_FAILURE" },
+    { LIBZIPPP_ERROR_OWRITE_FAILURE, "LIBZIPPP_ERROR_OWRITE_FAILURE" },
+    { LIBZIPPP_ERROR_OWRITE_INDEX_FAILURE,
+      "LIBZIPPP_ERROR_OWRITE_INDEX_FAILURE" },
+    { LIBZIPPP_ERROR_UNKNOWN, "LIBZIPPP_ERROR_UNKNOWN" }
+};
 } // namespace
 
 std::string
@@ -519,6 +533,19 @@ envmsg(std::string opt, std::vector<std::string> &vmsg)
     }
 
     return "";
+}
+
+std::string
+libzipppretcodestr(int retcode)
+{
+    auto v = libzippdef2str.find(retcode);
+    if (v == libzippdef2str.end()) {
+        std::string msg{ "UNKNOWN_LIBZIPPP_RETURN_CODE:" };
+        msg += std::to_string(retcode);
+        return msg;
+    }
+
+    return v->second;
 }
 
 } // namespace crosswrench

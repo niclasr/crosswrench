@@ -39,6 +39,7 @@ std::string envormsg(std::string &);
 bool isosdarwin();
 std::string envdescmsg(std::string opt);
 std::string envmsg(std::string opt, std::vector<std::string> &vmsg);
+std::string libzipppretcodestr(int);
 } // namespace crosswrench
 
 #endif
