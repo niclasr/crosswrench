@@ -147,6 +147,11 @@ spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
     createdirs(filepath);
 
     output_p.open(filepath, outmode);
+    if (!output_p) {
+        std::string msg{ "crosswrench install: could not open " };
+        msg += filepath.string();
+        throw msg;
+    }
 
     auto writer = [&](const void *data, libzippp_uint64 data_size) {
         if (replace_python) {
@@ -166,7 +171,7 @@ spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
 
     int ret = wheelfile.readEntry(entry, writer);
     if (ret != LIBZIPPP_OK) {
-        std::string msg{ "error of type " };
+        std::string msg{ "crosswrench install: error of type " };
         msg += libzipppretcodestr(ret);
         msg += " when writing ";
         msg += entry.getName();
@@ -198,9 +203,19 @@ spread::installfile(const char *data,
     createdirs(filepath);
 
     output_p.open(filepath, outmode);
+    if (!output_p) {
+        std::string msg{ "crosswrench install: could not open " };
+        msg += filepath.string();
+        throw msg;
+    }
 
     hasher->update((const std::uint8_t *)data, data_size);
     output_p.write(data, data_size);
+    if (!output_p) {
+        std::string msg{ "crosswrench install: could not write to file " };
+        msg += filepath.string();
+        throw msg;
+    }
 
     output_p.close();
 
