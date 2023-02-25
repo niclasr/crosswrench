@@ -58,7 +58,7 @@ distdashversion()
 }
 
 std::map<std::string, std::string> opt2env{ { "destdir", "DESTDIR" },
-                                            { "python", "PYTHONBIN" } };
+                                            { "python", "PYTHON" } };
 
 std::map<int, std::string> libzippdef2str{
     { LIBZIPPP_OK, "LIBZIPPP_OK" },
