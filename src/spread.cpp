@@ -76,6 +76,20 @@ spread::install()
 {
     std::cout << "Installing files" << std::endl;
     auto files = wheelfile.getEntries();
+
+    // check file permissions
+    for (auto &file : files) {
+        // files that should not be installed
+        if (isrecordfilenames(file.getName()) || file.isDirectory()) {
+            continue;
+        }
+
+        checkinstallaccess(installpath(file));
+    }
+    checkinstallaccess(installpath("INSTALLER"));
+    checkinstallaccess(installpath("RECORD"));
+
+    // install files
     for (auto &file : files) {
         // files that should not be installed
         if (isrecordfilenames(file.getName()) || file.isDirectory()) {
@@ -169,15 +183,20 @@ spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
     // debugging
     printverboseinstallloc(entry.getName(), filepath.string());
 
-    int ret = wheelfile.readEntry(entry, writer);
-    if (ret != LIBZIPPP_OK) {
-        std::string msg{ "crosswrench install: error of type " };
-        msg += libzipppretcodestr(ret);
-        msg += " when writing ";
-        msg += entry.getName();
-        msg += " to ";
-        msg += filepath.string();
-        throw msg;
+    // libzippp can't handle file with 0 size, ignoring them works
+    // since nothing needs to be written to get the correct hash
+    // and create the correct file.
+    if (entry.getSize() != 0) {
+        int ret = wheelfile.readEntry(entry, writer);
+        if (ret != LIBZIPPP_OK) {
+            std::string msg{ "crosswrench install: error of type " };
+            msg += libzipppretcodestr(ret);
+            msg += " when writing ";
+            msg += entry.getName();
+            msg += " to ";
+            msg += filepath.string();
+            throw msg;
+        }
     }
     output_p.close();
 
@@ -317,8 +336,7 @@ spread::installdirecturl()
     std::ios_base::openmode inmode{ std::ios_base::binary |
                                     std::ios_base::out };
 
-    auto directurlpath = destdir / rootinstalldir(rootispurelib) /
-                         dotdistinfodir() / "direct_url.json";
+    auto directurlpath = installpath("direct_url.json");
     std::string url = config::instance()->get_value("direct-url");
     boost::filesystem::path archive{ config::instance()->get_value(
       "direct-url-archive") };
@@ -356,6 +374,73 @@ spread::printverboseinstallloc(std::string name, std::string loc)
     if (verbose) {
         std::cout << name << " -> " << loc << std::endl;
     }
+}
+
+void
+spread::checkinstallaccess(boost::filesystem::path filepath)
+{
+    boost::filesystem::path filepathc;
+
+    std::string errmsg{ "crosswrench install: access check for " };
+    errmsg += filepath.string();
+    errmsg += " failed: ";
+
+    if (boost::filesystem::exists(filepath)) {
+        if (boost::filesystem::is_regular_file(filepath)) {
+            if (access(filepath.c_str(), W_OK) != 0) {
+                errmsg += filepath.string();
+                errmsg += " can't be written to";
+                throw errmsg;
+            }
+        }
+        else {
+            errmsg += filepath.string();
+            errmsg += " is not a regular file";
+            throw errmsg;
+        }
+    }
+
+    filepathc = filepath;
+    do {
+        filepathc = filepathc.parent_path();
+        if (boost::filesystem::exists(filepathc)) {
+            if (boost::filesystem::is_directory(filepathc)) {
+                if (access(filepathc.c_str(), W_OK | X_OK) == 0) {
+                    break;
+                }
+                else {
+                    errmsg += " the directory ";
+                    errmsg += filepathc.string();
+                    errmsg += " doesn't allow creation of ";
+                    if (filepathc == filepath.parent_path()) {
+                        errmsg += "files";
+                    }
+                    else {
+                        errmsg += "directories";
+                    }
+
+                    throw errmsg;
+                }
+            }
+            else {
+                errmsg += filepathc.string();
+                errmsg += " is not a directory";
+                throw errmsg;
+            }
+        }
+    }
+    while (filepathc.has_parent_path());
+}
+
+boost::filesystem::path
+spread::installpath(std::string filename)
+{
+    auto path = destdir;
+    path /= rootinstalldir(rootispurelib);
+    path /= dotdistinfodir();
+    path /= filename;
+
+    return path;
 }
 
 } // namespace crosswrench

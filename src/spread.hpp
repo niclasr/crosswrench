@@ -38,6 +38,8 @@ class spread
     void installentrypointconsolescripts();
     void installdirecturl();
     void printverboseinstallloc(std::string, std::string);
+    void checkinstallaccess(boost::filesystem::path);
+    boost::filesystem::path installpath(std::string);
 
     libzippp::ZipArchive &wheelfile;
     record record2write;
