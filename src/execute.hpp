@@ -2,7 +2,7 @@
 #define _SRC_EXECUTE_HPP_
 
 namespace crosswrench {
-    int execute();
+int execute();
 } // namespace crosswrench
 
 #endif

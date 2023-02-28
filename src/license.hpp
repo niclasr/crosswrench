@@ -6,6 +6,6 @@ namespace crosswrench {
 void show_license();
 void show_license_libs();
 
-}
+} // namespace crosswrench
 
 #endif

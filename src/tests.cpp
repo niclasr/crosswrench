@@ -103,13 +103,14 @@ TEST_CASE("record class", "[record]")
     std::map<std::string, std::string> sm;
     sm["wheel"] = "wheel-0.37.1-py2.py3-none-any.whl";
     crosswrench::config::instance()->setup(sm);
-    REQUIRE_THROWS_AS([&]() {
-        std::string record_test1{
-            "afile,sha256=iujzVdlXafvRsdXC6HMC/09grXvDF0Vl6PhKoHq4kLo,6"
-        };
-        crosswrench::record record1{ record_test1 };
-    }(),
-    std::string);
+    REQUIRE_THROWS_AS(
+      [&]() {
+          std::string record_test1{
+              "afile,sha256=iujzVdlXafvRsdXC6HMC/09grXvDF0Vl6PhKoHq4kLo,6"
+          };
+          crosswrench::record record1{ record_test1 };
+      }(),
+      std::string);
     REQUIRE_NOTHROW([&]() {
         std::string record_test1{
             "afile,sha256=iujzVdlXafvRsdXC6HMC_09grXvDF0Vl6PhKoHq4kLo,6"

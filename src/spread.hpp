@@ -25,7 +25,7 @@ class spread
     void compile();
     void createdirs(boost::filesystem::path);
     boost::filesystem::path createinstallpath(boost::filesystem::path,
-                                            boost::filesystem::path);
+                                              boost::filesystem::path);
     boost::filesystem::path dotdatadirinstallpath(libzippp::ZipEntry &);
     boost::filesystem::path installpath(libzippp::ZipEntry &);
     void installfile(libzippp::ZipEntry &, boost::filesystem::path);
