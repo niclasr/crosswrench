@@ -33,7 +33,7 @@ SOFTWARE.
 #include <string>
 #include <vector>
 
-bool check_options(cxxopts::ParseResult &pr);
+bool check_options(cxxopts::ParseResult &);
 
 int
 main(int argc, char *argv[])

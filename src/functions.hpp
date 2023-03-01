@@ -21,7 +21,7 @@ boost::filesystem::path rootinstalldir(bool);
 boost::filesystem::path installdir(std::string);
 bool get_cmd_output(std::string &, std::vector<std::string> &, std::string);
 bool wheelhasabsolutepaths(libzippp::ZipArchive &);
-bool onlyalloweddotdatapaths(libzippp::ZipArchive &ar);
+bool onlyalloweddotdatapaths(libzippp::ZipArchive &);
 boost::filesystem::path dotdatainstalldir(std::string);
 bool isscript(libzippp::ZipEntry &);
 bool strvec_contains(std::vector<std::string> &, std::string &);
