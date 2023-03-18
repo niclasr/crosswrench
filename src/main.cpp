@@ -84,7 +84,7 @@ main(int argc, char *argv[])
 
         if ((argc == 2 && result.count("help")) || argc == 1) {
             std::cout << options.help() << std::endl;
-            return EXIT_SUCCESS;
+            return (argc == 2 ? EXIT_SUCCESS : EXIT_FAILURE);
         }
 
         if (argc == 2 && result.count("license")) {
@@ -107,7 +107,7 @@ main(int argc, char *argv[])
         }
     }
     catch (cxxopts::argument_incorrect_type &e) {
-        std::cout << e.what() << ", use --help to see valid options"
+        std::cerr << e.what() << ", use --help to see valid options"
                   << std::endl;
         return EXIT_FAILURE;
     }
