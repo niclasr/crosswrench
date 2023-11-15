@@ -55,8 +55,8 @@ THE SOFTWARE.
 #define CXXOPTS_LINKONCE_CONST	__declspec(selectany) extern
 #define CXXOPTS_LINKONCE		__declspec(selectany) extern
 #else
-#define CXXOPTS_LINKONCE_CONST	
-#define CXXOPTS_LINKONCE		
+#define CXXOPTS_LINKONCE_CONST
+#define CXXOPTS_LINKONCE
 #endif
 
 #ifndef CXXOPTS_NO_REGEX
