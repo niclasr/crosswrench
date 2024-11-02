@@ -106,12 +106,12 @@ main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
     }
-    catch (cxxopts::argument_incorrect_type &e) {
+    catch (cxxopts::exceptions::incorrect_argument_type &e) {
         std::cerr << e.what() << ", use --help to see valid options"
                   << std::endl;
         return EXIT_FAILURE;
     }
-    catch (cxxopts::OptionException &e) {
+    catch (cxxopts::exceptions::exception &e) {
         std::cerr << e.what() << ", this shuld never happen in crosswrench"
                   << std::endl;
         return EXIT_FAILURE;
