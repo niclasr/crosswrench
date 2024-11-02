@@ -36,6 +36,7 @@ SOFTWARE.
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <iostream>
 #include <map>
 #include <string>
 #include <thread>
