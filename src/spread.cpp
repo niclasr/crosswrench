@@ -387,7 +387,7 @@ spread::checkinstallaccess(boost::filesystem::path filepath)
 
     if (boost::filesystem::exists(filepath)) {
         if (boost::filesystem::is_regular_file(filepath)) {
-            if (access(filepath.c_str(), W_OK) != 0) {
+            if (faccessat(AT_FDCWD, filepath.c_str(), W_OK, AT_EACCESS) != 0) {
                 errmsg += filepath.string();
                 errmsg += " can't be written to";
                 throw errmsg;
@@ -405,7 +405,11 @@ spread::checkinstallaccess(boost::filesystem::path filepath)
         filepathc = filepathc.parent_path();
         if (boost::filesystem::exists(filepathc)) {
             if (boost::filesystem::is_directory(filepathc)) {
-                if (access(filepathc.c_str(), W_OK | X_OK) == 0) {
+                if (faccessat(AT_FDCWD,
+                              filepathc.c_str(),
+                              W_OK | X_OK,
+                              AT_EACCESS) == 0)
+                {
                     break;
                 }
                 else {
