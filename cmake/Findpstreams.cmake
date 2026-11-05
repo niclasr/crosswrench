@@ -16,10 +16,10 @@ if (PSTREAMS_INCLUDE_DIR)
                              int main(){return 0;}"
                              PV)
   if(PV)
-  add_library(pstreams::pstreams INTERFACE IMPORTED)
-  target_include_directories(pstreams::pstreams
-    SYSTEM INTERFACE "${PSTREAMS_INCLUDE_DIR}"
-  )
+    add_library(pstreams::pstreams INTERFACE IMPORTED)
+    target_include_directories(pstreams::pstreams
+      SYSTEM INTERFACE "${PSTREAMS_INCLUDE_DIR}"
+    )
   else()
     message(FATAL_ERROR "pstreams was found but is of a version below 1.0.1")
   endif()
