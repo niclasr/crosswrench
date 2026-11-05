@@ -24,10 +24,9 @@ make
 make install
 ```
 ### Required dependencies
-- working c++14 (c++20 if using botan3) compiler environment
-- [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) or [pkgconf](http://pkgconf.org/)
+- working c++20 compiler environment
 - [boost](https://www.boost.org/)
-- [botan 2 or 3](https://botan.randombit.net/) botan 2 is the default, use the cmake option USE_BOTAN3 to use botan 3
+- [botan 3](https://botan.randombit.net/)
 - [cmake](https://cmake.org/)
 - [libzip](https://libzip.org/)
 
