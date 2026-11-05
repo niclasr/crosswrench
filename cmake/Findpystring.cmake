@@ -18,6 +18,8 @@ if (PYSTRING_FOUND)
   add_library(pystring::pystring UNKNOWN IMPORTED)
   set_target_properties(pystring::pystring PROPERTIES
     IMPORTED_LOCATION "${PYSTRING_LIBRARY}"
-    INTERFACE_INCLUDE_DIRECTORIES "${PYSTRING_INCLUDE_DIR}"
+  )
+  target_include_directories(pystring::pystring
+    SYSTEM INTERFACE "${PYSTRING_INCLUDE_DIR}"
   )
 endif()

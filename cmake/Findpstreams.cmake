@@ -17,8 +17,8 @@ if (PSTREAMS_INCLUDE_DIR)
                              PV)
   if(PV)
   add_library(pstreams::pstreams INTERFACE IMPORTED)
-  set_target_properties(pstreams::pstreams PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${PSTREAMS_INCLUDE_DIR}"
+  target_include_directories(pstreams::pstreams
+    SYSTEM INTERFACE "${PSTREAMS_INCLUDE_DIR}"
   )
   else()
     message(FATAL_ERROR "pstreams was found but is of a version below 1.0.1")

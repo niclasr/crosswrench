@@ -37,7 +37,7 @@ function(cw_library NAME)
         foreach(E_TARGET IN LISTS CW_LIBRARY_ETARGETS)
             target_link_libraries(cw_all_targets INTERFACE ${E_TARGET})
         endforeach()
-        target_include_directories(cw_all_targets INTERFACE
+        target_include_directories(cw_all_targets SYSTEM INTERFACE
                                    ${CMAKE_SOURCE_DIR}/libs/${NAME})
         foreach(SRC_FILE IN LISTS CW_LIBRARY_SRCS)
             target_sources(cw_shared_src PRIVATE
