@@ -44,7 +44,7 @@ cw_add_compile_flag(cw_all_targets INTERFACE -Wall)
 cw_add_compile_flag(cw_all_targets INTERFACE -Wextra)
 
 # libs
-option(EXTERNAL_LIBS "Use external libs by default" OFF)
+option(CW_EXTERNAL_LIBS "Use external libs by default" OFF)
 find_package(Botan 3 REQUIRED)
 target_link_libraries(cw_all_targets INTERFACE botan::botan)
 cw_library(csv2)

@@ -27,7 +27,7 @@ SOFTWARE.
 
 #include <botan/base64.h>
 #include <botan/hash.h>
-#if defined(EXTERNAL_CSV2)
+#if defined(CW_EXTERNAL_CSV2)
 #include <csv2/reader.hpp>
 #include <csv2/writer.hpp>
 #else

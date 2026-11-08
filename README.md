@@ -38,7 +38,7 @@ These are:
 - [pstreams](http://pstreams.sourceforge.net/)
 - [pystring](https://github.com/imageworks/pystring)
 
-The CMake argument -DEXTERNAL_LIBS=ON makes them all external by default, -DEXTERNAL_#NAME#=ON where #NAME#
+The CMake argument -DCW_EXTERNAL_LIBS=ON makes them all external by default, -DCW_EXTERNAL_#NAME#=ON where #NAME#
 is the name in uppercase of the dependency listed above makes the individual dependency external.
 
 **crosswrench** requires a python 3 interpreter with the
