@@ -45,9 +45,6 @@ cw_add_compile_flag(cw_all_targets INTERFACE -Wextra)
 
 # libs
 option(EXTERNAL_LIBS "Use external libs by default" OFF)
-find_package(Boost REQUIRED COMPONENTS "filesystem" CONFIG)
-target_link_libraries(cw_all_targets INTERFACE Boost::filesystem)
-target_compile_definitions(cw_all_targets INTERFACE BOOST_FILESYSTEM_VERSION=4)
 find_package(Botan 3 REQUIRED)
 target_link_libraries(cw_all_targets INTERFACE botan::botan)
 cw_library(csv2)

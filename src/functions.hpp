@@ -1,11 +1,11 @@
 #if !defined(_SRC_FUNCTIONS_HPP_)
 #define _SRC_FUNCTIONS_HPP_
 
-#include <boost/filesystem.hpp>
 #include <cxxopts.hpp>
 #include <libzippp.h>
 
 #include <cstdint>
+#include <filesystem>
 #include <map>
 #include <string>
 
@@ -17,12 +17,12 @@ bool iswheelfilenamevalid(const std::string &);
 bool minimumdistinfofiles(libzippp::ZipArchive &);
 std::string base64urlsafenopad(std::string);
 bool isrecordfilenames(std::string);
-boost::filesystem::path rootinstalldir(bool);
-boost::filesystem::path installdir(std::string);
+std::filesystem::path rootinstalldir(bool);
+std::filesystem::path installdir(std::string);
 bool get_cmd_output(std::string &, std::vector<std::string> &, std::string);
 bool wheelhasabsolutepaths(libzippp::ZipArchive &);
 bool onlyalloweddotdatapaths(libzippp::ZipArchive &);
-boost::filesystem::path dotdatainstalldir(std::string);
+std::filesystem::path dotdatainstalldir(std::string);
 bool isscript(libzippp::ZipEntry &);
 bool strvec_contains(std::vector<std::string> &, std::string &);
 std::uint16_t getelf16(std::uint8_t, const std::uint8_t *);
@@ -30,7 +30,7 @@ std::uint32_t getelf32(std::uint8_t, const std::uint8_t *);
 bool iselfexec(libzippp::ZipEntry &, libzippp::ZipArchive &);
 std::map<std::string, std::string> getentrypointscripts(libzippp::ZipEntry &);
 std::string createscript(std::string &);
-void setexecperms(boost::filesystem::path);
+void setexecperms(const std::filesystem::path &);
 bool wheelhasdotdotpath(libzippp::ZipArchive &);
 std::string expandhome(std::string);
 int countoptorenv(cxxopts::ParseResult &, std::string);

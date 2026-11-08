@@ -25,8 +25,6 @@ SOFTWARE.
 #include "config.hpp"
 #include "functions.hpp"
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <botan/base64.h>
 #include <botan/hash.h>
 #include <libzippp.h>
@@ -35,6 +33,7 @@ SOFTWARE.
 
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <ios>
 #include <iostream>
@@ -107,17 +106,17 @@ spread::install()
     record2write.write(rootispurelib, destdir);
 }
 
-boost::filesystem::path
-spread::createinstallpath(boost::filesystem::path prefix,
-                          boost::filesystem::path end)
+std::filesystem::path
+spread::createinstallpath(std::filesystem::path prefix,
+                          std::filesystem::path end)
 {
-    boost::filesystem::path filepath = destdir;
+    std::filesystem::path filepath = destdir;
     filepath /= prefix;
     filepath /= end;
     return filepath;
 }
 
-boost::filesystem::path
+std::filesystem::path
 spread::dotdatadirinstallpath(libzippp::ZipEntry &entry)
 {
     std::vector<std::string> dirnames;
@@ -129,7 +128,7 @@ spread::dotdatadirinstallpath(libzippp::ZipEntry &entry)
                              pystring::join("/", dirnames_install));
 }
 
-boost::filesystem::path
+std::filesystem::path
 spread::installpath(libzippp::ZipEntry &entry)
 {
     if (pystring::startswith(entry.getName(), dotdatadir())) {
@@ -141,7 +140,7 @@ spread::installpath(libzippp::ZipEntry &entry)
 }
 
 void
-spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
+spread::installfile(libzippp::ZipEntry &entry, std::filesystem::path filepath)
 {
     if (isscript(entry)) {
         auto prefix = config::instance()->get_value("script-prefix");
@@ -155,7 +154,7 @@ spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
     bool replace_python = isscript(entry);
     bool setexec = isscript(entry) || iselfexec(entry, wheelfile);
 
-    boost::filesystem::ofstream output_p;
+    std::ofstream output_p;
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
 
     createdirs(filepath);
@@ -214,9 +213,9 @@ spread::installfile(libzippp::ZipEntry &entry, boost::filesystem::path filepath)
 void
 spread::installfile(const char *data,
                     size_t data_size,
-                    boost::filesystem::path filepath)
+                    std::filesystem::path filepath)
 {
-    boost::filesystem::ofstream output_p;
+    std::ofstream output_p;
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
 
     createdirs(filepath);
@@ -283,27 +282,27 @@ spread::installinstallerfile()
 }
 
 void
-spread::add2record(boost::filesystem::path filepath,
+spread::add2record(std::filesystem::path filepath,
                    std::unique_ptr<Botan::HashFunction> &hasher)
 {
     auto filepathrelroot = pystring::strip(
-      boost::filesystem::relative(filepath,
-                                  destdir / rootinstalldir(rootispurelib))
+      std::filesystem::relative(filepath,
+                                destdir / rootinstalldir(rootispurelib))
         .string(),
       "\"");
 
     record2write.add(filepathrelroot,
                      h2b.strongest_algorithm_hashlib(),
                      base64urlsafenopad(Botan::base64_encode(hasher->final())),
-                     std::to_string(boost::filesystem::file_size(filepath)));
+                     std::to_string(std::filesystem::file_size(filepath)));
 }
 
 void
-spread::createdirs(boost::filesystem::path filepath)
+spread::createdirs(std::filesystem::path filepath)
 {
-    boost::filesystem::path dirpath = filepath;
+    std::filesystem::path dirpath = filepath;
     dirpath.remove_filename();
-    boost::filesystem::create_directories(dirpath);
+    std::filesystem::create_directories(dirpath);
 }
 
 void
@@ -332,13 +331,13 @@ void
 spread::installdirecturl()
 {
     std::cout << "Installing direct_url.json" << std::endl;
-    boost::filesystem::ifstream input_p;
+    std::ifstream input_p;
     std::ios_base::openmode inmode{ std::ios_base::binary |
                                     std::ios_base::out };
 
     auto directurlpath = installpath("direct_url.json");
     std::string url = config::instance()->get_value("direct-url");
-    boost::filesystem::path archive{ config::instance()->get_value(
+    std::filesystem::path archive{ config::instance()->get_value(
       "direct-url-archive") };
     std::vector<std::uint8_t> buf(2048);
     auto hasher = Botan::HashFunction::create(h2b.strongest_algorithm_botan());
@@ -377,16 +376,16 @@ spread::printverboseinstallloc(std::string name, std::string loc)
 }
 
 void
-spread::checkinstallaccess(boost::filesystem::path filepath)
+spread::checkinstallaccess(std::filesystem::path filepath)
 {
-    boost::filesystem::path filepathc;
+    std::filesystem::path filepathc;
 
     std::string errmsg{ "crosswrench install: access check for " };
     errmsg += filepath.string();
     errmsg += " failed: ";
 
-    if (boost::filesystem::exists(filepath)) {
-        if (boost::filesystem::is_regular_file(filepath)) {
+    if (std::filesystem::exists(filepath)) {
+        if (std::filesystem::is_regular_file(filepath)) {
             if (faccessat(AT_FDCWD, filepath.c_str(), W_OK, AT_EACCESS) != 0) {
                 errmsg += filepath.string();
                 errmsg += " can't be written to";
@@ -403,8 +402,8 @@ spread::checkinstallaccess(boost::filesystem::path filepath)
     filepathc = filepath;
     do {
         filepathc = filepathc.parent_path();
-        if (boost::filesystem::exists(filepathc)) {
-            if (boost::filesystem::is_directory(filepathc)) {
+        if (std::filesystem::exists(filepathc)) {
+            if (std::filesystem::is_directory(filepathc)) {
                 if (faccessat(AT_FDCWD,
                               filepathc.c_str(),
                               W_OK | X_OK,
@@ -436,7 +435,7 @@ spread::checkinstallaccess(boost::filesystem::path filepath)
     while (filepathc.has_parent_path());
 }
 
-boost::filesystem::path
+std::filesystem::path
 spread::installpath(std::string filename)
 {
     auto path = destdir;

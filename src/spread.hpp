@@ -4,10 +4,10 @@
 #include "hashlib2botan.hpp"
 #include "record.hpp"
 
-#include <boost/filesystem.hpp>
 #include <botan/hash.h>
 #include <libzippp.h>
 
+#include <filesystem>
 #include <set>
 #include <string>
 
@@ -20,16 +20,16 @@ class spread
     void install();
 
   private:
-    void add2record(boost::filesystem::path,
+    void add2record(std::filesystem::path,
                     std::unique_ptr<Botan::HashFunction> &);
     void compile();
-    void createdirs(boost::filesystem::path);
-    boost::filesystem::path createinstallpath(boost::filesystem::path,
-                                              boost::filesystem::path);
-    boost::filesystem::path dotdatadirinstallpath(libzippp::ZipEntry &);
-    boost::filesystem::path installpath(libzippp::ZipEntry &);
-    void installfile(libzippp::ZipEntry &, boost::filesystem::path);
-    void installfile(const char *, size_t, boost::filesystem::path);
+    void createdirs(std::filesystem::path);
+    std::filesystem::path createinstallpath(std::filesystem::path,
+                                            std::filesystem::path);
+    std::filesystem::path dotdatadirinstallpath(libzippp::ZipEntry &);
+    std::filesystem::path installpath(libzippp::ZipEntry &);
+    void installfile(libzippp::ZipEntry &, std::filesystem::path);
+    void installfile(const char *, size_t, std::filesystem::path);
     void installinstallerfile();
     uintptr_t writereplacedpython(const void *,
                                   libzippp_uint64,
@@ -38,15 +38,15 @@ class spread
     void installentrypointconsolescripts();
     void installdirecturl();
     void printverboseinstallloc(std::string, std::string);
-    void checkinstallaccess(boost::filesystem::path);
-    boost::filesystem::path installpath(std::string);
+    void checkinstallaccess(std::filesystem::path);
+    std::filesystem::path installpath(std::string);
 
     libzippp::ZipArchive &wheelfile;
     record record2write;
     bool rootispurelib;
-    boost::filesystem::path destdir;
+    std::filesystem::path destdir;
     std::ios_base::openmode outmode;
-    std::set<boost::filesystem::path> py_files;
+    std::set<std::filesystem::path> py_files;
     hashlib2botan h2b;
     bool verbose;
 };

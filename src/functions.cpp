@@ -24,7 +24,6 @@ SOFTWARE.
 
 #include "config.hpp"
 
-#include <boost/filesystem.hpp>
 #include <cxxopts.hpp>
 #include <libzippp.h>
 #include <pstream.h>
@@ -36,6 +35,7 @@ SOFTWARE.
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <string>
@@ -50,7 +50,7 @@ distdashversion()
 {
     std::vector<std::string> result;
     std::string wheelarg = config::instance()->get_value("wheel");
-    boost::filesystem::path wheelpath{ wheelarg };
+    std::filesystem::path wheelpath{ wheelarg };
     std::string wheelname = wheelpath.filename().string();
     pystring::split(wheelname, result, "-");
     result.erase(result.begin() + 2, result.end());
@@ -102,7 +102,7 @@ isbase64urlsafenopad(const std::string &str)
 bool
 iswheelfilenamevalid(const std::string &filepath)
 {
-    boost::filesystem::path wheelpath{ filepath };
+    std::filesystem::path wheelpath{ filepath };
     std::string wheelname = wheelpath.filename().string();
 
     if (!pystring::endswith(wheelname, ".whl")) {
@@ -151,14 +151,14 @@ isrecordfilenames(std::string name)
            (name == dotdistinfodir() + "/RECORD.jws");
 }
 
-boost::filesystem::path
+std::filesystem::path
 rootinstalldir(bool rootispurelib)
 {
     std::string rootinstall = rootispurelib ? "purelib" : "platlib";
     return installdir(rootinstall);
 }
 
-boost::filesystem::path
+std::filesystem::path
 dotdatainstalldir(std::string keydir)
 {
     std::string dotdatainstall =
@@ -166,10 +166,10 @@ dotdatainstalldir(std::string keydir)
     return installdir(dotdatainstall);
 }
 
-boost::filesystem::path
+std::filesystem::path
 installdir(std::string pythondir)
 {
-    boost::filesystem::path thepath = config::instance()->get_value(pythondir);
+    std::filesystem::path thepath = config::instance()->get_value(pythondir);
     return thepath.relative_path();
 }
 
@@ -415,13 +415,13 @@ createscript(std::string &rhs)
 }
 
 void
-setexecperms(boost::filesystem::path filepath)
+setexecperms(const std::filesystem::path &filepath)
 {
-    boost::filesystem::permissions(filepath,
-                                   boost::filesystem::perms::owner_exe |
-                                     boost::filesystem::perms::group_exe |
-                                     boost::filesystem::perms::others_exe |
-                                     boost::filesystem::perms::add_perms);
+    std::filesystem::permissions(filepath,
+                                 std::filesystem::perms::owner_exec |
+                                   std::filesystem::perms::group_exec |
+                                   std::filesystem::perms::others_exec,
+                                 std::filesystem::perm_options::add);
 }
 
 bool

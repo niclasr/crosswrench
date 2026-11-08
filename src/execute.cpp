@@ -26,9 +26,8 @@ SOFTWARE.
 #include "spread.hpp"
 #include "wheel.hpp"
 
-#include <boost/filesystem.hpp>
-
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <string>
 
@@ -85,10 +84,10 @@ execute()
     }
 
     try {
-        boost::filesystem::create_directories(
+        std::filesystem::create_directories(
           config::instance()->get_value("destdir"));
     }
-    catch (boost::filesystem::filesystem_error &e) {
+    catch (std::filesystem::filesystem_error &e) {
         std::cerr << "destdir argument invalid: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
@@ -123,7 +122,7 @@ execute()
         std::cerr << s << std::endl;
         return EXIT_FAILURE;
     }
-    catch (boost::filesystem::filesystem_error &e) {
+    catch (std::filesystem::filesystem_error &e) {
         std::cerr << "crosswrench install: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
