@@ -25,7 +25,6 @@ make install
 ```
 ### Required dependencies
 - working c++20 compiler environment
-- [boost](https://www.boost.org/)
 - [botan 3](https://botan.randombit.net/)
 - [cmake](https://cmake.org/)
 - [libzip](https://libzip.org/)
